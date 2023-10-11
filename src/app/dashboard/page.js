@@ -48,7 +48,6 @@ export default function Dashboard() {
   const [carts, setCarts] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [value, setValue] = React.useState(0);
-  const router = useRouter();
 
   useEffect(() => {
     fetch("https://fakestoreapi.com/products")

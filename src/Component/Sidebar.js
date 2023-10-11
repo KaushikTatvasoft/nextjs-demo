@@ -9,9 +9,11 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FolderIcon from "@mui/icons-material/Folder";
 import LogoutIcon from "@mui/icons-material/Logout";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
     const [selectedIndex, setSelectedIndex] = React.useState(0);
+    const router = useRouter();
 
     const handleListItemClick = (event, index) => {
       setSelectedIndex(index);
