@@ -4,7 +4,13 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import Image from "next/image";
 import React from "react";
 
-export default function ProductCardForCart({key,product,renderProduct ,updateCart, selectedProducts}) {
+export default function ProductCardForCart({
+  key,
+  product,
+  renderProduct,
+  updateCart,
+  selectedProducts,
+}) {
   return (
     <div key={key} className="flex border-2 p-3 mb-3">
       <Image

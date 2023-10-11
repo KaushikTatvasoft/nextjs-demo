@@ -18,7 +18,7 @@ export default function Sidebar() {
     };
     
   return (
-    <div className="w-[20%] h-screen flex flex-col justify-between border-r-2">
+    <>
       <div>
         <div className="text-2xl text-center">Demo</div>
         <List component="nav" aria-label="main mailbox folders">
@@ -64,6 +64,6 @@ export default function Sidebar() {
           </ListItemButton>
         </List>
       </div>
-    </div>
+    </>
   );
 }
