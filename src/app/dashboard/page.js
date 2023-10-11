@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "@/Component/Sidebar";
 import ProductCard from "@/Component/ProductCard";
 import ProductCardForCart from "@/Component/ProductCardForCart";
+import withAuth from "@/lib/withAuth";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -43,7 +44,7 @@ function a11yProps(index) {
   };
 }
 
-export default function Dashboard() {
+const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [carts, setCarts] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -184,3 +185,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export default withAuth(Dashboard)

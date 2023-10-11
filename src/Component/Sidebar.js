@@ -10,6 +10,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import LogoutIcon from "@mui/icons-material/Logout";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { deleteCookie } from "cookies-next";
 
 export default function Sidebar() {
     const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -57,7 +58,10 @@ export default function Sidebar() {
         <List component="nav" aria-label="main mailbox folders">
           <ListItemButton
             selected={selectedIndex === 0}
-            onClick={() => router.push("/login")}
+            onClick={() => {
+              router.push("/login")
+              deleteCookie('email')
+            }}
           >
             <ListItemIcon>
               <LogoutIcon />

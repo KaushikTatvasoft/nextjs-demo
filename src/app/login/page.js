@@ -8,6 +8,7 @@ import { Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
+import withAuth from "@/lib/withAuth";
 
 const Login = () => {
   const router = useRouter();
@@ -26,7 +27,7 @@ const Login = () => {
 
       if (response.statusCode === 200) {
         console.log(response);
-        setCookie("token", response.data.data);
+        setCookie("email", response.data.data.email);
         toast.success(response.data.message);
         router.push("/dashboard");
       } else {
@@ -89,4 +90,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default withAuth(Login);
