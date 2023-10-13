@@ -3,13 +3,12 @@ import React, { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import PropTypes from "prop-types";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { useRouter } from "next/navigation";
 import Sidebar from "@/Component/Sidebar";
 import ProductCard from "@/Component/ProductCard";
 import ProductCardForCart from "@/Component/ProductCardForCart";
 import withAuth from "@/lib/withAuth";
+import { Button } from "@mui/material";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -24,7 +23,7 @@ function CustomTabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -46,29 +45,35 @@ function a11yProps(index) {
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
-  const [carts, setCarts] = useState(null);
+  const [orders, setOrders] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [value, setValue] = React.useState(0);
 
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
+    fetch("/api/products")
       .then((res) => res.json())
-      .then((json) => setProducts(json));
+      .then((res) => {
+        if (res.data.length) {
+          setProducts(res.data);
+        }
+      });
 
     getCart();
+    getOrder()
   }, []);
 
   const getCart = () => {
-    fetch("https://fakestoreapi.com/carts/user/2")
+    fetch("api/carts/2")
       .then((res) => res.json())
-      .then((json) => {
-        setCarts(json[0]);
-        setSelectedProducts(
-          json[0]?.products.reduce((result, item) => {
-            result[item.productId] = item.quantity;
-            return result;
-          }, {})
-        );
+      .then((res) => {
+        if (res.data) {
+          setSelectedProducts(
+            res.data?.products.reduce((result, item) => {
+              result[item.productId] = item.quantity;
+              return result;
+            }, {})
+          );
+        }
       });
   };
 
@@ -85,7 +90,7 @@ const Dashboard = () => {
       };
 
       // Make the API call using the updated state
-      fetch("https://fakestoreapi.com/carts/2", {
+      fetch("api/carts/2", {
         method: "PUT",
         body: JSON.stringify({
           userId: 2,
@@ -95,8 +100,9 @@ const Dashboard = () => {
             quantity: updatedSelectedProducts[key],
           })),
         }),
-      }).then((res) => res.json());
-      // .then(() => getCart());
+      })
+        .then((res) => res.json())
+        .then(() => getCart());
 
       // Return the updated state
       return updatedSelectedProducts;
@@ -104,18 +110,32 @@ const Dashboard = () => {
   };
 
   const getProduct = (id) => {
-    const matchingProducts = products.filter(
-      (product) => product.id === Number(id)
-    );
+    const matchingProducts = products.filter((product) => product._id === id);
     return matchingProducts.length > 0 ? matchingProducts[0] : null;
   };
 
-  console.log(products, carts, selectedProducts);
+  const createOrder = () => {
+    // Make the API call using the updated state
+    fetch("api/orders/2", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: 2,
+        date: "2019-12-10", // Fix: Use a string for the date
+        products: Object.keys(selectedProducts).map((key) => ({
+          productId: key,
+          quantity: selectedProducts[key],
+        })),
+      }),
+    })
+      .then((res) => res.json())
+      .then(() =>  getOrder());
+  };
 
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
-
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
+  const getOrder = () => {
+    // Make the API call using the updated state
+    fetch("api/orders/2")
+      .then((res) => res.json())
+      .then((res) => setOrders(res.data));
   };
 
   return (
@@ -154,6 +174,7 @@ const Dashboard = () => {
                       key={index}
                       product={product}
                       selectedProducts={selectedProducts}
+                      setSelectedProducts={setSelectedProducts}
                       updateCart={updateCart}
                     />
                   );
@@ -161,7 +182,12 @@ const Dashboard = () => {
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            Item Two
+            <div className="mt-10">
+              {orders.length &&
+                orders.map((order, index) => {
+                  return <div key={index}>{order._id} - {order.price} </div>;
+                })}
+            </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             <div className="mt-10">
@@ -178,12 +204,15 @@ const Dashboard = () => {
                     />
                   );
                 })}
+              <Button variant="outlined" onClick={() => createOrder()}>
+                Order Now
+              </Button>
             </div>
           </CustomTabPanel>
         </Box>
       </div>
     </div>
   );
-}
+};
 
-export default withAuth(Dashboard)
+export default withAuth(Dashboard);

@@ -26,12 +26,11 @@ const Login = () => {
       const response = await fetchApi("/api/login", JSON.stringify(values));
 
       if (response.statusCode === 200) {
-        console.log(response);
         setCookie("email", response.data.data.email);
         toast.success(response.data.message);
         router.push("/dashboard");
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.errors);
       }
     },
   });

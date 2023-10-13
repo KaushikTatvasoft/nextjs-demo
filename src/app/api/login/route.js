@@ -23,7 +23,7 @@ export async function POST(req, res) {
       await schema.validate(reqData, { abortEarly: false });
     } catch (validationError) {
       return NextResponse.json(
-        { message: validation.error[0], errors: validationError.errors[0] },
+        { message: validationError.error?.length && validationError.error[0], errors: validationError.errors[0] },
         { status: 400 }
       );
     }

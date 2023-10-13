@@ -21,7 +21,6 @@ const Login = () => {
     const response = await fetchApi("/api/login", JSON.stringify(loginData));
 
     if (response.statusCode == 200) {
-      console.log(response);
       setCookie('token',response.data.data)
       toast.success(response.data.message)
       router.push("/dashboard");
