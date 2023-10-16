@@ -26,7 +26,7 @@ export async function GET(req, params) {
     const orders = await Orders.find(params.params);
 
     return NextResponse.json(
-      { data: orders , message: "Order fetch Successfully" },
+      { data: orders, message: "Order fetch Successfully" },
       { status: 200 }
     );
 
@@ -43,11 +43,24 @@ export async function POST(req, params) {
   try {
     await dbConnect();
 
+    const authenticated = await authenticate(req);
+
+    if (typeof authenticated === 'object') {
+      return authenticated
+    }
+
+    if (!params.params.userId) {
+      return NextResponse.json(
+        { message: "Missing 'id' parameter in the request URL" },
+        { status: 400 }
+      );
+    }
+
     // Assuming you're sending JSON data in the request body
     const reqData = await req.json();
 
     // Validate the request body
-    if (!reqData.userId || !Array.isArray(reqData.products)) {
+    if (!Array.isArray(reqData.products)) {
       return NextResponse.json(
         { message: "'userId' and 'products' fields are required" },
         { status: 400 }
@@ -74,15 +87,15 @@ export async function POST(req, params) {
 
     // Calculate the total price based on the products array
     const totalPrice = await Promise.all(reqData.products.map(async product => {
-        const productDetails = await Products.findOne({ _id: product.productId });
-        return productDetails ? productDetails.price * product.quantity : 0;
+      const productDetails = await Products.findOne({ _id: product.productId });
+      return productDetails ? productDetails.price * product.quantity : 0;
     })).then(prices => prices.reduce((total, price) => total + price, 0));
-    
+
     // Add data to the Orders table
     const newOrder = await Orders.create({
-        userId: reqData.userId,
-        products: reqData.products,
-        price: totalPrice,
+      userId: params.params.userId,
+      products: reqData.products,
+      price: totalPrice,
     });
 
     return NextResponse.json(
