@@ -2,20 +2,24 @@
 import dbConnect from "@/lib/dbConnect";
 import Products from '../../../Models/products'
 import { NextResponse } from "next/server";
-import * as Yup from 'yup';
+import authenticate from "@/lib/authMiddleware";
 
 export async function GET(req, res) {
   try {
     await dbConnect();
 
-    // Use bcrypt or another secure password hashing library for real-world applications
-    const products = await Products.find();
+    const authenticated = await authenticate(req);
 
-      return NextResponse.json(
-        { data: products, message: "Products fetch Successfully" },
-        { status: 200 }
-      );
-    
+    if (typeof authenticated === 'object') {
+      return authenticated
+    }
+
+    const products = await Products.find();
+    return NextResponse.json(
+      { data: products, message: "Products fetch Successfully" },
+      { status: 200 }
+    );
+
   } catch (error) {
     console.error(error);
     return NextResponse.json(

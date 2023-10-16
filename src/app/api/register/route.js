@@ -1,4 +1,5 @@
 // pages/api/register.js
+import { hashPassword } from '@/helpers/auth';
 import dbConnect from '../../../lib/dbConnect';
 import Users from '../../../Models/users';
 import { NextRequest, NextResponse } from 'next/server';
@@ -31,10 +32,12 @@ export async function POST(req, res) {
       return NextResponse.json({ message: 'User already exists' }, { status: 401 });
     }
 
+    const hashedPassword = await hashPassword(reqData.password);
+
     // Create a new user
     const newUser = await Users.create({
       email: reqData.email,
-      password: reqData.password,
+      password: hashedPassword,
       firstname: reqData.firstname,
       lastname: reqData.lastname,
       address: reqData.address,

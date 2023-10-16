@@ -3,7 +3,7 @@ import React from "react";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
-import { fetchApi } from "../../lib/common";
+import API, { fetchApi, handleError, handleSuccess } from "../../lib/common";
 import { Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -23,15 +23,12 @@ const Login = () => {
       password: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      const response = await fetchApi("/api/login", JSON.stringify(values));
-
-      if (response.statusCode === 200) {
-        setCookie("email", response.data.data.email);
-        toast.success(response.data.message);
+      await API('POST',"/api/login", values).then((res) => {
+        setCookie("token", res.data.data.token);
+        setCookie("userData", res.data.data.user);
+        handleSuccess(res)
         router.push("/dashboard");
-      } else {
-        toast.error(response.data.errors);
-      }
+      }).catch(err => handleError(err));
     },
   });
 

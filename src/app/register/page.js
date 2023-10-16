@@ -1,5 +1,5 @@
 "use client"; // This is a client component 👈🏽
-import { fetchApi } from "@/lib/common";
+import API, { fetchApi, handleError } from "@/lib/common";
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,14 +31,10 @@ const Register = () => {
         .required('Required'),
     }),
     onSubmit: async (values) => {
-      // Your form submission logic here
-      const response = await fetchApi("/api/register", JSON.stringify(values));
-      if (response.statusCode === 200) {
-        toast.success(response.data.message);
+      await API('POST', "/api/register", values).then(res => {
+        handleSuccess(res)
         router.push("/login");
-      } else {
-        toast.error(response.data.message);
-      }
+      }).catch(err => handleError(err));
     },
   });
 
@@ -57,8 +53,8 @@ const Register = () => {
               name="firstname"
               value={formik.values.firstname}
               onChange={formik.handleChange}
-              error={ Boolean(formik.errors.firstname)}
-              helperText={ formik.errors.firstname}
+              error={Boolean(formik.errors.firstname)}
+              helperText={formik.errors.firstname}
             />
             <TextField
               variant="standard"
@@ -68,8 +64,8 @@ const Register = () => {
               name="lastname"
               value={formik.values.lastname}
               onChange={formik.handleChange}
-              error={ Boolean(formik.errors.lastname)}
-              helperText={ formik.errors.lastname}
+              error={Boolean(formik.errors.lastname)}
+              helperText={formik.errors.lastname}
             />
           </div>
           <TextField
@@ -81,8 +77,8 @@ const Register = () => {
             className="mt-3"
             value={formik.values.email}
             onChange={formik.handleChange}
-            error={ Boolean(formik.errors.email)}
-            helperText={ formik.errors.email}
+            error={Boolean(formik.errors.email)}
+            helperText={formik.errors.email}
           />
           <TextField
             variant="standard"
@@ -93,8 +89,8 @@ const Register = () => {
             className="mt-3"
             value={formik.values.address}
             onChange={formik.handleChange}
-            error={ Boolean(formik.errors.address)}
-            helperText={ formik.errors.address}
+            error={Boolean(formik.errors.address)}
+            helperText={formik.errors.address}
           />
           <TextField
             variant="standard"
@@ -106,8 +102,8 @@ const Register = () => {
             className="mt-3"
             value={formik.values.password}
             onChange={formik.handleChange}
-            error={ Boolean(formik.errors.password)}
-            helperText={ formik.errors.password}
+            error={Boolean(formik.errors.password)}
+            helperText={formik.errors.password}
           />
           <TextField
             variant="standard"
@@ -119,8 +115,8 @@ const Register = () => {
             className="mt-3"
             value={formik.values.confirmPassword}
             onChange={formik.handleChange}
-            error={ Boolean(formik.errors.confirmPassword)}
-            helperText={ formik.errors.confirmPassword}
+            error={Boolean(formik.errors.confirmPassword)}
+            helperText={formik.errors.confirmPassword}
           />
           <Button
             className="text-center mt-4"
