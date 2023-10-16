@@ -6,22 +6,23 @@ import ProductCardForCart from "@/Component/ProductCardForCart";
 import withAuth from "@/lib/withAuth";
 import { Button } from "@mui/material";
 import API, { handleError, handleSuccess } from "@/lib/common";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const {activeTab} = useSelector(state => state.user)
 
   useEffect(() => {
-    if (!selectedIndex) {
+    if (!activeTab) {
       getProducts()
-    } else if (selectedIndex === 1) {
+    } else if (activeTab === 1) {
       getOrder()
     } else {
       getCart();
     }
-  }, [selectedIndex]);
+  }, [activeTab]);
 
   const getProducts = () => {
     API('GET', "/api/products")
@@ -101,10 +102,10 @@ const Dashboard = () => {
   return (
     <div className="w-screen h-screen flex">
       <div className="w-[20%] h-screen flex flex-col justify-between border-r-2">
-        <Sidebar selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
+        <Sidebar activeTab={activeTab} />
       </div>
       <div className="w-[80%] h-screen overflow-auto">
-        {selectedIndex === 0 && <div className="flex flex-wrap">
+        {activeTab === 0 && <div className="flex flex-wrap">
 
           {!!products.length &&
             products.map((product, index) => {
@@ -120,13 +121,13 @@ const Dashboard = () => {
               );
             })}
         </div>}
-        {selectedIndex === 1 && <div>
+        {activeTab === 1 && <div>
           {orders.length &&
             orders.map((order, index) => {
               return <div key={index}>{order._id} - {order.price} </div>;
             })}
         </div>}
-        {selectedIndex === 2 && <div>
+        {activeTab === 2 && <div>
           {!!Object.keys(selectedProducts)?.length &&
             Object.keys(selectedProducts).map((product, index) => {
               const renderProduct = getProduct(product);
