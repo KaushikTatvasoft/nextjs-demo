@@ -47,6 +47,7 @@ const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [value, setValue] = React.useState(0);
 
   useEffect(() => {
@@ -128,7 +129,7 @@ const Dashboard = () => {
       }),
     })
       .then((res) => res.json())
-      .then(() =>  getOrder());
+      .then(() => getOrder());
   };
 
   const getOrder = () => {
@@ -141,75 +142,50 @@ const Dashboard = () => {
   return (
     <div className="w-screen h-screen flex">
       <div className="w-[20%] h-screen flex flex-col justify-between border-r-2">
-        <Sidebar />
+        <Sidebar selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
       </div>
       <div className="w-[80%] h-screen overflow-auto">
-        <Box sx={{ width: "100%" }}>
-          <Box
-            sx={{
-              width: "100%",
-              borderBottom: 1,
-              position: "fixed",
-              borderColor: "divider",
-              bgcolor: "#FFF",
-              zIndex: 2,
-            }}
-          >
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="basic tabs example"
-            >
-              <Tab label="Products" {...a11yProps(0)} />
-              <Tab label="Orders" {...a11yProps(1)} />
-              <Tab label="Cart" {...a11yProps(2)} />
-            </Tabs>
-          </Box>
-          <CustomTabPanel value={value} index={0}>
-            <div className="flex flex-wrap mt-10">
-              {!!products.length &&
-                products.map((product, index) => {
-                  return (
-                    <ProductCard
-                      key={index}
-                      product={product}
-                      selectedProducts={selectedProducts}
-                      setSelectedProducts={setSelectedProducts}
-                      updateCart={updateCart}
-                    />
-                  );
-                })}
-            </div>
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
-            <div className="mt-10">
-              {orders.length &&
-                orders.map((order, index) => {
-                  return <div key={index}>{order._id} - {order.price} </div>;
-                })}
-            </div>
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={2}>
-            <div className="mt-10">
-              {!!Object.keys(selectedProducts)?.length &&
-                Object.keys(selectedProducts).map((product, index) => {
-                  const renderProduct = getProduct(product);
-                  return (
-                    <ProductCardForCart
-                      key={index}
-                      product={product}
-                      renderProduct={renderProduct}
-                      updateCart={updateCart}
-                      selectedProducts={selectedProducts}
-                    />
-                  );
-                })}
-              <Button variant="outlined" onClick={() => createOrder()}>
+        {selectedIndex === 0 && <div className="flex flex-wrap mt-10">
+
+          {!!products.length &&
+            products.map((product, index) => {
+              return (
+                                <ProductCard
+                  key={index}
+                  product={product}
+                  selectedProducts={selectedProducts}
+                  setSelectedProducts={setSelectedProducts}
+                  updateCart={updateCart}
+                />
+            
+              );
+            })}
+        </div>}
+        {selectedIndex === 1 && <div className="mt-10">
+          {orders.length &&
+            orders.map((order, index) => {
+              return <div key={index}>{order._id} - {order.price} </div>;
+            })}
+        </div>}
+        {selectedIndex === 2 && <div className="mt-10">
+          {!!Object.keys(selectedProducts)?.length &&
+            Object.keys(selectedProducts).map((product, index) => {
+              const renderProduct = getProduct(product);
+              return (
+                <ProductCardForCart
+                  key={index}
+                  product={product}
+                  renderProduct={renderProduct}
+                  updateCart={updateCart}
+                  selectedProducts={selectedProducts}
+                  setSelectedProducts={setSelectedProducts}
+                />
+              );
+            })}
+             <Button variant="outlined" onClick={() => createOrder()}>
                 Order Now
               </Button>
-            </div>
-          </CustomTabPanel>
-        </Box>
+        </div>}
       </div>
     </div>
   );

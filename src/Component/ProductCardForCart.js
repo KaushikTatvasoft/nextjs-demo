@@ -10,6 +10,7 @@ export default function ProductCardForCart({
   renderProduct,
   updateCart,
   selectedProducts,
+  setSelectedProducts
 }) {
   return (
     <div key={key} className="flex border-2 p-3 mb-3">
