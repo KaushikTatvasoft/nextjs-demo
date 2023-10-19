@@ -8,6 +8,8 @@ module.exports =
       {
         userId: { type: String },
         products: { type: Array },
+        completed: { type: Boolean },
+        orderId: { type: String },
       },
       { versionKey: false }
     )

@@ -16,6 +16,7 @@ export async function POST(req, res) {
       password: Yup.string().required('Password is required'),
       firstname: Yup.string().required('Firstname is required'),
       lastname: Yup.string().required('Lastname is required'),
+      phone: Yup.string().required('Phone is required'),
       address: Yup.string(),
     });
 
@@ -41,6 +42,7 @@ export async function POST(req, res) {
       firstname: reqData.firstname,
       lastname: reqData.lastname,
       address: reqData.address,
+      phone : reqData.phone ,
     });
 
     return NextResponse.json({ message: 'Registration successful', user: newUser }, { status: 200 });

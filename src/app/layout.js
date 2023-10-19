@@ -1,6 +1,11 @@
 import ReduxProvider from '@/redux/provider'
+import Main from '@/Component/Main';
 import { Inter } from 'next/font/google'
+import "../assets/plugins/nucleo/css/nucleo.css";
+import "../assets/css/custom.css";
 import './globals.css'
+import "../assets/css/dashboard-react.css"
+import "../assets/scss/custom-theme/main.scss";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -14,7 +19,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
-          {children}
+          <Main {...children} />
         </ReduxProvider>
       </body>
     </html>

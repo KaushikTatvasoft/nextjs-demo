@@ -50,8 +50,8 @@ export async function POST(req, res) {
     // token data
     const tokenData = {
       id: user._id,
-      firstName: user.firstname,
-      lastName: user.lastname
+      firstname: user.firstname,
+      lastname: user.lastname
     };
 
     // generate token
@@ -66,8 +66,8 @@ export async function POST(req, res) {
     const userData = {
       user: {
         userId: user._id,
-        firstName: user.firstname,
-        lastName: user.lastname
+        firstname: user.firstname,
+        lastname: user.lastname
       },
       token: token,
     };

@@ -22,7 +22,7 @@ export async function GET(req, params) {
     }
 
     // Use bcrypt or another secure password hashing library for real-world applications
-    const carts = await Carts.findOne(params.params);
+    const carts = await Carts.findOne({...params.params,completed:false});
 
     return NextResponse.json(
       { data: carts, message: "Cart fetch Successfully" },
@@ -88,6 +88,7 @@ export async function PUT(req, params) {
     const updatedCart = await Carts.findOneAndUpdate(
       { userId: params.params.userId },
       { products: reqData.products },
+      { completed: false },
       { new: true, upsert: true } // 'new' returns the modified document, 'upsert' creates a new document if it doesn't exist
     );
 
