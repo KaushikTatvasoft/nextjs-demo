@@ -1,17 +1,26 @@
 "use client"; // This is a client component 👈🏽
-import API, {  handleError, handleSuccess } from "@/lib/common";
-import { Button, TextField } from "@mui/material";
+import API, { handleError, handleSuccess } from "@/lib/common";
 import { useRouter } from "next/navigation";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import "react-toastify/dist/ReactToastify.css";
+import { useState } from "react";
+import { Button, Card, CardBody, Form, Col, Row, Label } from "reactstrap";
+import InputField from "@/Component/InputField";
+import { registrationInputFields } from "@/constants/general";
+import Link from "next/link";
+import { Store } from "@/redux/configureStore";
+import { Actions } from "@/redux/actions";
 
 const Register = () => {
   const router = useRouter();
+  // State
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
       email: '',
+      phone: '',
       firstname: '',
       lastname: '',
       address: '',
@@ -22,6 +31,9 @@ const Register = () => {
       email: Yup.string().email('Invalid email address').required('Required'),
       firstname: Yup.string().required('Required'),
       lastname: Yup.string().required('Required'),
+      phone: Yup.string()
+        .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
+        .required('Required'),
       address: Yup.string(),
       password: Yup.string().required('Required'),
       confirmPassword: Yup.string()
@@ -29,107 +41,66 @@ const Register = () => {
         .required('Required'),
     }),
     onSubmit: async (values) => {
+      Store.dispatch({ type: Actions.User.SetLoading, payload: true })
       await API('POST', "/api/register", values).then(res => {
         handleSuccess(res)
+        Store.dispatch({ type: Actions.User.SetLoading, payload: false })
         router.push("/login");
-      }).catch(err => handleError(err));
+      }).catch(err => {
+        Store.dispatch({ type: Actions.User.SetLoading, payload: false })
+        handleError(err)
+      });
     },
   });
 
   return (
-    <div className="w-[100%] h-[100%] flex justify-center items-center">
-      <div className="w-[30%] h-[30%] flex flex-col justify-center items-center">
-        <h1 className="text-center mb-5">Register</h1>
-        <form onSubmit={formik.handleSubmit}>
-          <div className="flex space-x-2 mb-2">
-            <TextField
-              variant="standard"
-              fullWidth
-              placeholder="Firstname"
-              id="firstname"
-              name="firstname"
-              value={formik.values.firstname}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.firstname)}
-              helperText={formik.errors.firstname}
-            />
-            <TextField
-              variant="standard"
-              fullWidth
-              placeholder="Lastname"
-              id="lastname"
-              name="lastname"
-              value={formik.values.lastname}
-              onChange={formik.handleChange}
-              error={Boolean(formik.errors.lastname)}
-              helperText={formik.errors.lastname}
-            />
-          </div>
-          <TextField
-            variant="standard"
-            fullWidth
-            placeholder="Email"
-            id="email"
-            name="email"
-            className="mt-3"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            error={Boolean(formik.errors.email)}
-            helperText={formik.errors.email}
-          />
-          <TextField
-            variant="standard"
-            fullWidth
-            placeholder="Address"
-            id="address"
-            name="address"
-            className="mt-3"
-            value={formik.values.address}
-            onChange={formik.handleChange}
-            error={Boolean(formik.errors.address)}
-            helperText={formik.errors.address}
-          />
-          <TextField
-            variant="standard"
-            fullWidth
-            type="password"
-            placeholder="Password"
-            id="password"
-            name="password"
-            className="mt-3"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            error={Boolean(formik.errors.password)}
-            helperText={formik.errors.password}
-          />
-          <TextField
-            variant="standard"
-            fullWidth
-            type="password"
-            placeholder="Confirm Password"
-            id="confirmPassword"
-            name="confirmPassword"
-            className="mt-3"
-            value={formik.values.confirmPassword}
-            onChange={formik.handleChange}
-            error={Boolean(formik.errors.confirmPassword)}
-            helperText={formik.errors.confirmPassword}
-          />
-          <Button
-            className="text-center mt-4"
-            variant="outlined"
-            type="submit"
-          >
-            Sign Up
-          </Button>
-        </form>
-        <div className="mt-4 text-center">
-          Already Have an Account?
-          <span className="cursor-pointer" onClick={() => router.push("/login")}>
-            {" "}
-            Sign In
-          </span>
+    <div className="pre-login-section">
+      <div className="pre-login-wrap large">
+        <div className="logo-wrap">
+          <span>Demo</span>
         </div>
+        <Card className="shadow">
+          <CardBody>
+            <div className="text-center mb-4">
+              <h1>Sign Up</h1>
+            </div>
+            <Form role="form">
+              <Row>
+                <Col md={6}>
+                  <InputField required placeholder="First Name" fieldName="firstname" formik={formik} />
+                </Col>
+                <Col md={6}>
+                  <InputField required placeholder="Last Name" fieldName="lastname" formik={formik} />
+                </Col>
+              </Row>
+              {registrationInputFields.map((row, index) => {
+                return <Row key={index}>
+                  <Col md={6}>
+                    <InputField required={row?.requiredLeft} passwordField placeholder={row.placeholderLeft} fieldName={row.fieldNameLeft} inputType={row?.passwordIconLeft ? showNewPassword ? "text" : "password" : row?.inputTypeLeft} passwordIcon={row?.passwordIconLeft} formik={formik} showPassword={showNewPassword} setShowPassword={setShowNewPassword} />
+                  </Col>
+                  <Col md={6}>
+                    <InputField required={row?.requiredRight} passwordField placeholder={row.placeholderRight} fieldName={row.fieldNameRight} inputType={row?.passwordIconRight ? showConfirmPassword ? "text" : "password" : row?.inputTypeRight} passwordIcon={row?.passwordIconRight} formik={formik} showPassword={showConfirmPassword} setShowPassword={setShowConfirmPassword} />
+                  </Col>
+                </Row>
+              })}
+              <Row>
+                <Col>
+                  <InputField required placeholder="Address" fieldName="address" formik={formik} />
+                </Col>
+              </Row>
+              <div className="btn-wrap">
+                <Button color='primary' disabled={!!Object.values(formik.errors)?.length} type="button" onClick={formik.handleSubmit}>
+                  Sign up
+                </Button>
+              </div>
+            </Form>
+            <div className="links-wrap">
+              <Link className="secondary-link" href="/login">
+                Already have an account?
+              </Link>
+            </div>
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

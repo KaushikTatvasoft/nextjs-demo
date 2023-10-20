@@ -1,6 +1,7 @@
 // pages/api/orders.js
 import dbConnect from "@/lib/dbConnect";
 import Orders from '../../../../Models/orders';
+import Carts from '../../../../Models/carts';
 import Products from '../../../../Models/products';
 import { NextResponse } from "next/server";
 import authenticate from "@/lib/authMiddleware";
@@ -97,6 +98,17 @@ export async function POST(req, params) {
       products: reqData.products,
       price: totalPrice,
     });
+
+    await Carts.findOneAndUpdate({
+      userId: params.params.userId,
+      completed: false,
+    },
+      {
+        $set: {
+          completed: true,
+          orderId: newOrder._id,
+        },
+      });
 
     return NextResponse.json(
       { data: newOrder, message: "Order added successfully" },

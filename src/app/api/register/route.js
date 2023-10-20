@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 export async function POST(req, res) {
   try {
     await dbConnect();
-    const reqData =  await req.json()
+    const reqData = await req.json()
 
     // Define validation schema using Yup
     const schema = Yup.object().shape({
@@ -16,6 +16,9 @@ export async function POST(req, res) {
       password: Yup.string().required('Password is required'),
       firstname: Yup.string().required('Firstname is required'),
       lastname: Yup.string().required('Lastname is required'),
+      phone: Yup.string()
+        .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
+        .required('Required'),
       address: Yup.string(),
     });
 
@@ -34,13 +37,14 @@ export async function POST(req, res) {
 
     const hashedPassword = await hashPassword(reqData.password);
 
-    // Create a new user
+        // Create a new user
     const newUser = await Users.create({
       email: reqData.email,
       password: hashedPassword,
       firstname: reqData.firstname,
       lastname: reqData.lastname,
       address: reqData.address,
+      phone: reqData.phone,
     });
 
     return NextResponse.json({ message: 'Registration successful', user: newUser }, { status: 200 });

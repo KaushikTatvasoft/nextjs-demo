@@ -10,6 +10,7 @@ module.exports =
         description: { type: String },
         image: { type: String },
         price: { type: Number },
+        salePrice: { type: Number },
         title: { type: String },
       },
       { versionKey: false }

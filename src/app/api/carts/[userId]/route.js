@@ -22,8 +22,12 @@ export async function GET(req, params) {
     }
 
     // Use bcrypt or another secure password hashing library for real-world applications
-    const carts = await Carts.findOne(params.params);
-
+    const carts = await Carts.findOne({
+      $and: [
+        { userId: params.params.userId },
+        { completed: false }
+      ]
+    });
     return NextResponse.json(
       { data: carts, message: "Cart fetch Successfully" },
       { status: 200 }
@@ -86,9 +90,9 @@ export async function PUT(req, params) {
 
     // Update data in the Carts table based on userId
     const updatedCart = await Carts.findOneAndUpdate(
-      { userId: params.params.userId },
+      { userId: params.params.userId, completed: false },
       { products: reqData.products },
-      { new: true, upsert: true } // 'new' returns the modified document, 'upsert' creates a new document if it doesn't exist
+      { new: true, upsert: true }
     );
 
     return NextResponse.json(

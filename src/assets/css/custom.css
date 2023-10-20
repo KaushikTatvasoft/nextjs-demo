@@ -1,0 +1,391 @@
+img {
+    object-fit: cover;
+}
+
+/* disabled textarea resizing feature */
+textarea {
+    resize: none;
+}
+
+.full-width-height {
+    width: 100%;
+    height: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.center-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.space-between-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.invalid-feedback {
+    margin: 0.25rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.flex-grow {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.relative {
+    position: relative !important;
+}
+
+.flex-direction-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    background-color: #FFF;
+    padding: 1.5rem 0;
+}
+
+.restaurant-theme-color {
+    color: #233dd2 !important;
+}
+
+.admin-theme-color {
+    color: #233dd2 !important;
+}
+
+.register-form-box {
+    height: 863px;
+}
+
+.inputfield {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+@media (max-height: 800px) {
+
+    .col-1,
+    .col-2,
+    .col-3,
+    .col-4,
+    .col-5,
+    .col-6,
+    .col-7,
+    .col-8,
+    .col-9,
+    .col-10,
+    .col-11,
+    .col-12,
+    .col,
+    .col-auto,
+    .col-sm-1,
+    .col-sm-2,
+    .col-sm-3,
+    .col-sm-4,
+    .col-sm-5,
+    .col-sm-6,
+    .col-sm-7,
+    .col-sm-8,
+    .col-sm-9,
+    .col-sm-10,
+    .col-sm-11,
+    .col-sm-12,
+    .col-sm,
+    .col-sm-auto,
+    .col-md-1,
+    .col-md-2,
+    .col-md-3,
+    .col-md-4,
+    .col-md-5,
+    .col-md-6,
+    /* .col-md-7, */
+    .col-md-8,
+    .col-md-9,
+    .col-md-10,
+    .col-md-11,
+    .col-md-12,
+    .col-md,
+    .col-md-auto,
+    .col-lg-1,
+    .col-lg-2,
+    .col-lg-3,
+    .col-lg-4,
+    /* .col-lg-5, */
+    .col-lg-6,
+    .col-lg-7,
+    .col-lg-8,
+    .col-lg-9,
+    .col-lg-10,
+    .col-lg-11,
+    .col-lg-12,
+    .col-lg,
+    .col-lg-auto,
+    .col-xl-1,
+    .col-xl-2,
+    .col-xl-3,
+    .col-xl-4,
+    .col-xl-5,
+    .col-xl-6,
+    .col-xl-7,
+    .col-xl-8,
+    .col-xl-9,
+    .col-xl-10,
+    .col-xl-11,
+    .col-xl-12,
+    .col-xl,
+    .col-xl-auto {
+        height: 100%;
+    }
+}
+
+.confirmation-modal-body {
+    font-weight: 600;
+    font-size: 1.25rem;
+    text-align: center;
+}
+
+.loader {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.no-data-label {
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.serial-number {
+    width: 10px;
+    padding: 10px !important;
+    text-align: center;
+}
+
+.category-filter {
+    max-height: 300px;
+    overflow: auto;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    background: transparent;
+    scroll-padding: 0;
+    height: 5px;
+}
+
+::-webkit-scrollbar-corner {
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #11cdef;
+    border-radius: 10px;
+}
+
+.ellipsis-column {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ellipsis(...) after specific width */
+.ellipsis-message-column {
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recommended-field {
+    padding: 0.625rem 0;
+}
+
+.error-message {
+    width: 100%;
+    display: block;
+    padding: 0.25rem;
+    box-sizing: border-box;
+    color: #fb6340;
+    font-size: 80%;
+}
+
+.email-verification-check-icon {
+    font-size: 56px;
+}
+
+.email-verification-loader {
+    padding: 100px;
+}
+
+.avatar-logo {
+    width: 120px;
+    height: 120px;
+}
+
+.react-datetime-picker__wrapper {
+    border: none !important;
+}
+
+.rdt {
+    flex-grow: 1;
+}
+
+.rdtCount,
+.rdtCounterSeparator {
+    padding: 0 !important;
+    border: none !important;
+    color: #525f7f !important;
+}
+
+.rdtTimeToggle {
+    visibility: visible !important;
+}
+
+.rdtTimeToggle:before {
+    display: none !important;
+}
+
+.edit-close-icons {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icons {
+    height: 25px;
+    width: 25px;
+    padding: 5px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #FFF;
+    color: #525f7f;
+}
+
+.setting-configure-error-container {
+    width: 100%;
+    height: 3em;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #d3d3d3 !important;
+}
+
+.setting-configure-error-text {
+    font-size: 1em;
+    color: #D24533;
+    margin-right: 0.5em;
+}
+
+.product-note {
+    display: flex;
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    align-items: flex-end;
+    line-height: 1.8em;
+    color: #fb6340;
+}
+
+@media (max-width: 1580px) {
+    .product-note {
+        align-items: center;
+    }
+}
+
+.sidebar-logout {
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.sidebar-logout-background {
+    background: #f6f9fc;
+}
+
+/* Add space between value and disabled input field */
+.form-control:disabled {
+    padding-left: 5px !important;
+}
+
+/* sorted column style */
+.active-sort-column {
+    cursor: pointer;
+    font-weight: 700 !important;
+    color: #5e72e4 !important;
+}
+
+/* All subscription card parent container */
+.subscriptions-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 1em !important;
+}
+
+/* All subscription card container */
+.card-container {
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: 2em;
+}
+
+/* perticuler subscription card */
+.subscription-card {
+    flex-basis: 1%;
+    flex-grow: 1;
+    min-width: 350px;
+    max-width: 500px;
+    margin: 0.5em;
+    box-sizing: border-box;
+    padding: 1em;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* user selected subscription card */
+.selected-card {
+    border: 3px solid #5e72e4 !important;
+}
+
+/* purchased subscription card */
+.already-selected-card {
+    border: 3px solid #11cdef !important;
+}
+
+/* Submenu margin */
+.submenu-margin-left {
+    padding-left: 3.5rem !important;
+}
+
+.visually-hidden{
+    display: none;
+}
