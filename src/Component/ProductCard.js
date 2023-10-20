@@ -8,6 +8,7 @@ export default function ProductCard({
   key,
   product,
   selectedProducts,
+  setSelectedProducts,
   updateCart,
 }) {
   return (
@@ -30,26 +31,26 @@ export default function ProductCard({
       </p>
       <p className="my-2 font-bold">₹{product.price}</p>
 
-      {!!selectedProducts[product.id] && selectedProducts[product.id] ? (
+      {!!selectedProducts[product._id] && selectedProducts[product._id] ? (
         <div className="flex">
           <IconButton
             aria-label="delete"
-            disabled={!selectedProducts[product.id]}
+            disabled={!selectedProducts[product._id]}
             color="primary"
           >
             <RemoveIcon
               onClick={() =>
-                updateCart(product.id, selectedProducts[product.id] - 1)
+                updateCart(product._id, selectedProducts[product._id] - 1)
               }
             />
           </IconButton>
           <TextField
             type="number"
-            value={selectedProducts[product.id]}
+            value={selectedProducts[product._id]}
             onChange={(e) =>
               setSelectedProducts({
                 ...selectedProducts,
-                [product.id]: e.target.value,
+                [product._id]: e.target.value,
               })
             }
             size="small"
@@ -63,14 +64,14 @@ export default function ProductCard({
             aria-label="delete"
             color="primary"
             onClick={() =>
-              updateCart(product.id, selectedProducts[product.id] + 1)
+              updateCart(product._id, selectedProducts[product._id] + 1)
             }
           >
             <AddIcon />
           </IconButton>
         </div>
       ) : (
-        <Button variant="outlined" onClick={() => updateCart(product.id, 1)}>
+        <Button variant="outlined" onClick={() => updateCart(product._id, 1)}>
           Add to Cart
         </Button>
       )}

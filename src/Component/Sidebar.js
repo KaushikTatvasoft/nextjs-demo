@@ -12,8 +12,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
 
-export default function Sidebar() {
-    const [selectedIndex, setSelectedIndex] = React.useState(0);
+export default function Sidebar({selectedIndex, setSelectedIndex}) {
     const router = useRouter();
 
     const handleListItemClick = (event, index) => {
