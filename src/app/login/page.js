@@ -2,12 +2,10 @@
 import React from "react";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
-import API, { fetchApi, handleError, handleSuccess } from "../../lib/common";
+import API, {  handleError, handleSuccess } from "../../lib/common";
 import { Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import "react-toastify/dist/ReactToastify.css";
 import withAuth from "@/lib/withAuth";
 
 const Login = () => {
@@ -34,7 +32,6 @@ const Login = () => {
 
   return (
     <div className="w-[100%] h-[100%] flex justify-center items-center">
-      <ToastContainer />
       <div className="w-[30%] h-[30%] flex flex-col justify-center items-center">
         <h1 className="text-center mb-5">Login</h1>
         <form onSubmit={formik.handleSubmit}>

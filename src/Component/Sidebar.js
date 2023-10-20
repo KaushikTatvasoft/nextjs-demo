@@ -1,3 +1,4 @@
+"use client"; // This is a client component 👈🏽"
 import {
   List,
   ListItemButton,
@@ -11,22 +12,24 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "cookies-next";
+import { Store } from "@/redux/configureStore";
+import { Actions } from "@/redux/actions";
 
-export default function Sidebar({selectedIndex, setSelectedIndex}) {
-    const router = useRouter();
+export default function Sidebar({ activeTab}) {
+  const router = useRouter();
 
-    const handleListItemClick = (event, index) => {
-      setSelectedIndex(index);
-    };
-    
+  const handleListItemClick = (index) => {
+    Store.dispatch({ type : Actions.User.SetActiveTab, payload :index})
+  };
+
   return (
     <>
       <div>
         <div className="text-2xl text-center">Demo</div>
         <List component="nav" aria-label="main mailbox folders">
           <ListItemButton
-            selected={selectedIndex === 0}
-            onClick={(event) => handleListItemClick(event, 0)}
+            selected={activeTab === 0}
+            onClick={() => handleListItemClick(0)}
           >
             <ListItemIcon>
               <FeedIcon />
@@ -34,8 +37,8 @@ export default function Sidebar({selectedIndex, setSelectedIndex}) {
             <ListItemText primary="Products" />
           </ListItemButton>
           <ListItemButton
-            selected={selectedIndex === 1}
-            onClick={(event) => handleListItemClick(event, 1)}
+            selected={activeTab === 1}
+            onClick={() => handleListItemClick(1)}
           >
             <ListItemIcon>
               <FolderIcon />
@@ -43,8 +46,8 @@ export default function Sidebar({selectedIndex, setSelectedIndex}) {
             <ListItemText primary="Orders" />
           </ListItemButton>
           <ListItemButton
-            selected={selectedIndex === 2}
-            onClick={(event) => handleListItemClick(event, 2)}
+            selected={activeTab === 2}
+            onClick={() => handleListItemClick(2)}
           >
             <ListItemIcon>
               <ShoppingCartIcon />
@@ -56,7 +59,6 @@ export default function Sidebar({selectedIndex, setSelectedIndex}) {
       <div>
         <List component="nav" aria-label="main mailbox folders">
           <ListItemButton
-            selected={selectedIndex === 0}
             onClick={() => {
               router.push("/login")
               deleteCookie('token')

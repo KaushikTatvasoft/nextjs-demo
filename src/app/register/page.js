@@ -2,8 +2,6 @@
 import API, { fetchApi, handleError } from "@/lib/common";
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import "react-toastify/dist/ReactToastify.css";
@@ -40,7 +38,6 @@ const Register = () => {
 
   return (
     <div className="w-[100%] h-[100%] flex justify-center items-center">
-      <ToastContainer />
       <div className="w-[30%] h-[30%] flex flex-col justify-center items-center">
         <h1 className="text-center mb-5">Register</h1>
         <form onSubmit={formik.handleSubmit}>
