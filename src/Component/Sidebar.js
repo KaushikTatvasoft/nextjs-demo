@@ -59,7 +59,8 @@ export default function Sidebar({selectedIndex, setSelectedIndex}) {
             selected={selectedIndex === 0}
             onClick={() => {
               router.push("/login")
-              deleteCookie('email')
+              deleteCookie('token')
+              deleteCookie('userData')
             }}
           >
             <ListItemIcon>

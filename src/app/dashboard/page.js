@@ -1,85 +1,51 @@
 "use client"; // This is a client component 👈🏽"
 import React, { useEffect, useState } from "react";
-import Tabs from "@mui/material/Tabs";
-import PropTypes from "prop-types";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
 import Sidebar from "@/Component/Sidebar";
 import ProductCard from "@/Component/ProductCard";
 import ProductCardForCart from "@/Component/ProductCardForCart";
 import withAuth from "@/lib/withAuth";
 import { Button } from "@mui/material";
-
-function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <div>{children}</div>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
+import API, { handleError, handleSuccess } from "@/lib/common";
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [value, setValue] = React.useState(0);
 
   useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.data.length) {
-          setProducts(res.data);
-        }
-      });
+    if (!selectedIndex) {
+      getProducts()
+    } else if (selectedIndex === 1) {
+      getOrder()
+    } else {
+      getCart();
+    }
+  }, [selectedIndex]);
 
-    getCart();
-    getOrder()
-  }, []);
+  const getProducts = () => {
+    API('GET', "/api/products")
+      .then((res) => {
+        handleSuccess(res)
+        if (res?.data?.data?.length) {
+          setProducts(res.data.data);
+        }
+      }).catch(err => handleError(err))
+  }
 
   const getCart = () => {
-    fetch("api/carts/2")
-      .then((res) => res.json())
+    API('GET', "api/carts/2")
       .then((res) => {
-        if (res.data) {
+        handleSuccess(res)
+        if (res.data.data) {
           setSelectedProducts(
-            res.data?.products.reduce((result, item) => {
+            res.data.data?.products.reduce((result, item) => {
               result[item.productId] = item.quantity;
               return result;
             }, {})
           );
         }
-      });
-  };
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+      }).catch(err => handleError(err))
   };
 
   const updateCart = (productId, quantity) => {
@@ -91,19 +57,15 @@ const Dashboard = () => {
       };
 
       // Make the API call using the updated state
-      fetch("api/carts/2", {
-        method: "PUT",
-        body: JSON.stringify({
-          userId: 2,
-          date: "2019-12-10", // Fix: Use a string for the date
-          products: Object.keys(updatedSelectedProducts).map((key) => ({
-            productId: key,
-            quantity: updatedSelectedProducts[key],
-          })),
-        }),
+      API('PUT', "api/carts/2", {
+        userId: 2,
+        date: "2019-12-10", // Fix: Use a string for the date
+        products: Object.keys(updatedSelectedProducts).map((key) => ({
+          productId: key,
+          quantity: updatedSelectedProducts[key],
+        })),
       })
-        .then((res) => res.json())
-        .then(() => getCart());
+        .then(() => getCart()).catch(err => handleError(err))
 
       // Return the updated state
       return updatedSelectedProducts;
@@ -117,26 +79,23 @@ const Dashboard = () => {
 
   const createOrder = () => {
     // Make the API call using the updated state
-    fetch("api/orders/2", {
-      method: "POST",
-      body: JSON.stringify({
-        userId: 2,
-        date: "2019-12-10", // Fix: Use a string for the date
-        products: Object.keys(selectedProducts).map((key) => ({
-          productId: key,
-          quantity: selectedProducts[key],
-        })),
-      }),
+    API('POST', "api/orders/2", {
+      userId: 2,
+      date: "2019-12-10", // Fix: Use a string for the date
+      products: Object.keys(selectedProducts).map((key) => ({
+        productId: key,
+        quantity: selectedProducts[key],
+      })),
     })
-      .then((res) => res.json())
-      .then(() => getOrder());
+      .then(() => getOrder()).catch(err => handleError(err))
   };
 
   const getOrder = () => {
     // Make the API call using the updated state
-    fetch("api/orders/2")
-      .then((res) => res.json())
-      .then((res) => setOrders(res.data));
+    API('GET', "api/orders/2").then((res) => {
+      handleSuccess(res)
+      setOrders(res.data.data)
+    }).catch(err => handleError(err))
   };
 
   return (
@@ -145,29 +104,29 @@ const Dashboard = () => {
         <Sidebar selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} />
       </div>
       <div className="w-[80%] h-screen overflow-auto">
-        {selectedIndex === 0 && <div className="flex flex-wrap mt-10">
+        {selectedIndex === 0 && <div className="flex flex-wrap">
 
           {!!products.length &&
             products.map((product, index) => {
               return (
-                                <ProductCard
+                <ProductCard
                   key={index}
                   product={product}
                   selectedProducts={selectedProducts}
                   setSelectedProducts={setSelectedProducts}
                   updateCart={updateCart}
                 />
-            
+
               );
             })}
         </div>}
-        {selectedIndex === 1 && <div className="mt-10">
+        {selectedIndex === 1 && <div>
           {orders.length &&
             orders.map((order, index) => {
               return <div key={index}>{order._id} - {order.price} </div>;
             })}
         </div>}
-        {selectedIndex === 2 && <div className="mt-10">
+        {selectedIndex === 2 && <div>
           {!!Object.keys(selectedProducts)?.length &&
             Object.keys(selectedProducts).map((product, index) => {
               const renderProduct = getProduct(product);
@@ -182,9 +141,9 @@ const Dashboard = () => {
                 />
               );
             })}
-             <Button variant="outlined" onClick={() => createOrder()}>
-                Order Now
-              </Button>
+          <Button variant="outlined" onClick={() => createOrder()}>
+            Order Now
+          </Button>
         </div>}
       </div>
     </div>

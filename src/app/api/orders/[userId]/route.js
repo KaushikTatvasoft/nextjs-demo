@@ -3,10 +3,17 @@ import dbConnect from "@/lib/dbConnect";
 import Orders from '../../../../Models/orders';
 import Products from '../../../../Models/products';
 import { NextResponse } from "next/server";
+import authenticate from "@/lib/authMiddleware";
 
 export async function GET(req, params) {
   try {
     await dbConnect();
+
+    const authenticated = await authenticate(req);
+
+    if (typeof authenticated === 'object') {
+      return authenticated
+    }
 
     if (!params.params.userId) {
       return NextResponse.json(

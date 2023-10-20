@@ -9,7 +9,7 @@ const withAuth = (WrappedComponent) => {
 
     useEffect(() => {
       // Check if the user is authenticated (you need to implement this logic)
-      const isAuthenticated = !!getCookie('email')
+      const isAuthenticated = !!getCookie('token')
 
       if (!isAuthenticated) {
         // Redirect to the login page with the original requested route as a query parameter
