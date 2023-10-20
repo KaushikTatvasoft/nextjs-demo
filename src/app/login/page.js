@@ -1,75 +1,93 @@
-/* eslint-disable react/no-unescaped-entities */
-
 "use client"; // This is a client component 👈🏽"
-import React, { useState } from "react";
+import React from "react";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import { fetchApi } from "../../lib/common";
 import { Button, TextField } from "@mui/material";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import "react-toastify/dist/ReactToastify.css";
+import withAuth from "@/lib/withAuth";
 
 const Login = () => {
-  const [loginData, setLoginData] = useState({
-    username: "",
-    password: "",
+  const router = useRouter();
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email("Invalid email address").required("Required"),
+      password: Yup.string().required("Required"),
+    }),
+    onSubmit: async (values) => {
+      const response = await fetchApi("/api/login", JSON.stringify(values));
+
+      if (response.statusCode === 200) {
+        console.log(response);
+        setCookie("email", response.data.data.email);
+        toast.success(response.data.message);
+        router.push("/dashboard");
+      } else {
+        toast.error(response.data.message);
+      }
+    },
   });
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const router = useRouter();
-  const handleLogin = async () => {
-    const response = await fetchApi("/api/login", JSON.stringify(loginData));
-
-    if (response.statusCode == 200) {
-      console.log(response);
-      setCookie('token',response.data.data)
-      toast.success(response.data.message)
-      router.push("/dashboard");
-    }else{
-      toast.error(response.data.message)
-    }
-  };
-  
   return (
     <div className="w-[100%] h-[100%] flex justify-center items-center">
       <ToastContainer />
       <div className="w-[30%] h-[30%] flex flex-col justify-center items-center">
         <h1 className="text-center mb-5">Login</h1>
-        <TextField
-          variant="standard"
-          fullWidth
-          className="!mb-3"
-          placeholder="Username"
-          value={loginData.username}
-          onChange={(e) =>
-            setLoginData({ ...loginData, username: e.target.value })
-          }
-        />
-        <TextField
-          variant="standard"
-          type="password"
-          fullWidth
-          className="!mb-3"
-          placeholder="Password"
-          value={loginData.password}
-          onChange={(e) =>
-            setLoginData({ ...loginData, password: e.target.value })
-          }
-        />
-        <Button
-          className="text-center"
-          variant="outlined"
-          onClick={() => {
-            handleLogin();
-          }}
-        >
-          Login
-        </Button>
+        <form onSubmit={formik.handleSubmit}>
+          <TextField
+            variant="standard"
+            fullWidth
+            className="!mb-3"
+            placeholder="Email"
+            id="email"
+            name="email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            error={ Boolean(formik.errors.email)}
+            helperText={ formik.errors.email}
+          />
+          <TextField
+            variant="standard"
+            type="password"
+            fullWidth
+            className="!mb-3"
+            placeholder="Password"
+            id="password"
+            name="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            error={ Boolean(formik.errors.password)}
+            helperText={ formik.errors.password}
+          />
+          <Button
+            className="text-center"
+            variant="outlined"
+            type="submit"
+          >
+            Login
+          </Button>
+        </form>
         <div className="mt-4 text-center">
-          Don't Have an Account?
-          <span className="cursor-pointer" onClick={()=> router.push("/register")}> Sign up</span>
+          Don<span>&#39;</span>t Have an Account?
+          <span
+            className="cursor-pointer"
+            onClick={() => router.push("/register")}
+          >
+            {" "}
+            Sign up
+          </span>
         </div>
       </div>
     </div>
   );
 };
-export default Login;
+
+export default withAuth(Login);

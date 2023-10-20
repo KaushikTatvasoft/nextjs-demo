@@ -1,23 +1,50 @@
+// pages/api/register.js
 import dbConnect from '../../../lib/dbConnect';
-import Users from '../../../Models/users'
+import Users from '../../../Models/users';
 import { NextRequest, NextResponse } from 'next/server';
+import * as Yup from 'yup';
 
 export async function POST(req, res) {
+  try {
+    await dbConnect();
+    const reqData =  await req.json()
+
+    // Define validation schema using Yup
+    const schema = Yup.object().shape({
+      email: Yup.string().email('Invalid email address').required('Email is required'),
+      password: Yup.string().required('Password is required'),
+      firstname: Yup.string().required('Firstname is required'),
+      lastname: Yup.string().required('Lastname is required'),
+      address: Yup.string(),
+    });
+
+    // Validate the incoming data
     try {
-        await dbConnect()
-        let userData = await req.json();
-        const user = await Users.findOne({ "username": userData.username });
-        if(user){
-            return NextResponse.json({ message: 'User Already exist.' }, { status: 401 })
-        }else{
-            await Users.create({
-                username: userData.username,
-                password: userData.password,
-            })
-            return NextResponse.json({ message: 'Register Successfully' }, { status: 200 })
-        }
-    } catch (e) {
-        return NextResponse.json({ message: 'Internal server error' }, { status: 400 })
+      await schema.validate(reqData, { abortEarly: false });
+    } catch (validationError) {
+      return NextResponse.json({ message: validationError.errors[0], errors: validationError.errors[0] }, { status: 400 });
     }
+
+    // Check if the user already exists
+    const existingUser = await Users.findOne({ "email": reqData.email });
+    if (existingUser) {
+      return NextResponse.json({ message: 'User already exists' }, { status: 401 });
+    }
+
+    // Create a new user
+    const newUser = await Users.create({
+      email: reqData.email,
+      password: reqData.password,
+      firstname: reqData.firstname,
+      lastname: reqData.lastname,
+      address: reqData.address,
+    });
+
+    return NextResponse.json({ message: 'Registration successful', user: newUser }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
 }
 
+export default POST;
