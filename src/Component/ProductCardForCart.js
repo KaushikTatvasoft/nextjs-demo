@@ -3,17 +3,18 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Image from "next/image";
 import React from "react";
+import { updateCart } from "@/utils/middleware";
+import { Store } from "@/redux/configureStore";
+import { Actions } from "@/redux/actions";
 
 export default function ProductCardForCart({
   key,
   product,
   renderProduct,
-  updateCart,
-  selectedProducts,
-  setSelectedProducts
+  selectedProducts
 }) {
   return (
-    <div key={key} className="flex border-2 p-3 mb-3">
+    <div key={key} className="flex border-2 p-3 mb-3 rounded-full">
       <Image
         src={renderProduct?.image}
         alt="Image"
@@ -28,20 +29,22 @@ export default function ProductCardForCart({
       <div className="flex-grow flex justify-center items-center">
         <IconButton
           aria-label="delete"
-          disabled={!selectedProducts[product]}
+          disabled={!selectedProducts?.[product]}
           color="primary"
         >
           <RemoveIcon
-            onClick={() => updateCart(product, selectedProducts[product] - 1)}
+            onClick={() => updateCart(selectedProducts,product, selectedProducts[product] - 1)}
           />
         </IconButton>
         <TextField
           type="number"
           value={selectedProducts[product]}
           onChange={(e) =>
-            setSelectedProducts({
-              ...selectedProducts,
-              [product]: e.target.value,
+            Store.dispatch({
+              type: Actions.User.SetSelectedProducts, payload: {
+                ...selectedProducts,
+                [product]: e.target.value,
+              }
             })
           }
           size="small"
@@ -54,7 +57,7 @@ export default function ProductCardForCart({
         <IconButton
           aria-label="delete"
           color="primary"
-          onClick={() => updateCart(product, selectedProducts[product] + 1)}
+          onClick={() => updateCart(selectedProducts, product, selectedProducts[product] + 1)}
         >
           <AddIcon />
         </IconButton>

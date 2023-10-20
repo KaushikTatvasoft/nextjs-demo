@@ -88,8 +88,8 @@ export const getOrder = () => {
   Store.dispatch({ type: Actions.User.SetLoading, payload: true })
   API('GET', `api/orders/${userId}`).then((res) => {
     handleSuccess(res)
-    Store.dispatch({ type: Actions.User.SetOrders, payload: res.data.data || [] })
     Store.dispatch({ type: Actions.User.SetLoading, payload: false })
+    Store.dispatch({ type: Actions.User.SetOrders, payload: res.data.data || [] })
   }).catch(err => {
     Store.dispatch({ type: Actions.User.SetLoading, payload: false })
     handleError(err)
