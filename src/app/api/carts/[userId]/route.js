@@ -25,7 +25,7 @@ export async function GET(req, params) {
     const carts = await Carts.findOne(params.params);
 
     return NextResponse.json(
-      { data: carts , message: "Cart fetch Successfully" },
+      { data: carts, message: "Cart fetch Successfully" },
       { status: 200 }
     );
 
@@ -42,11 +42,24 @@ export async function PUT(req, params) {
   try {
     await dbConnect();
 
+    const authenticated = await authenticate(req);
+
+    if (typeof authenticated === 'object') {
+      return authenticated
+    }
+
+    if (!params.params.userId) {
+      return NextResponse.json(
+        { message: "Missing 'id' parameter in the request URL" },
+        { status: 400 }
+      );
+    }
+
     // Assuming you're sending JSON data in the request body
     const reqData = await req.json();
 
     // Validate the request body
-    if (!reqData.products || !Array.isArray(reqData.products)) {
+    if (!Array.isArray(reqData.products)) {
       return NextResponse.json(
         { message: "'products' field must be an array of objects" },
         { status: 400 }

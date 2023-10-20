@@ -29,7 +29,7 @@ export async function POST(req, res) {
     // Check if the user already exists
     const existingUser = await Users.findOne({ "email": reqData.email });
     if (existingUser) {
-      return NextResponse.json({ message: 'User already exists' }, { status: 401 });
+      return NextResponse.json({ message: 'User already exists' }, { status: 404 });
     }
 
     const hashedPassword = await hashPassword(reqData.password);

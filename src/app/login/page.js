@@ -23,7 +23,7 @@ const Login = () => {
     onSubmit: async (values) => {
       await API('POST',"/api/login", values).then((res) => {
         setCookie("token", res.data.data.token);
-        setCookie("userData", res.data.data.user);
+        setCookie("userData", JSON.stringify(res.data.data.user));
         handleSuccess(res)
         router.push("/dashboard");
       }).catch(err => handleError(err));

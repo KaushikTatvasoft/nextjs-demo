@@ -7,16 +7,19 @@ import withAuth from "@/lib/withAuth";
 import { Button } from "@mui/material";
 import API, { handleError, handleSuccess } from "@/lib/common";
 import { useSelector } from "react-redux";
+import { getCookie } from "cookies-next";
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const {activeTab} = useSelector(state => state.user)
+  const userId = getCookie('userData') ? JSON.parse(getCookie('userData'))?.userId : null;
 
   useEffect(() => {
     if (!activeTab) {
       getProducts()
+      getCart();
     } else if (activeTab === 1) {
       getOrder()
     } else {
@@ -35,7 +38,7 @@ const Dashboard = () => {
   }
 
   const getCart = () => {
-    API('GET', "api/carts/2")
+    API('GET', `api/carts/${userId}`)
       .then((res) => {
         handleSuccess(res)
         if (res.data.data) {
@@ -58,9 +61,8 @@ const Dashboard = () => {
       };
 
       // Make the API call using the updated state
-      API('PUT', "api/carts/2", {
-        userId: 2,
-        date: "2019-12-10", // Fix: Use a string for the date
+      API('PUT', `api/carts/${userId}`, {
+        date: new Date(), 
         products: Object.keys(updatedSelectedProducts).map((key) => ({
           productId: key,
           quantity: updatedSelectedProducts[key],
@@ -80,8 +82,7 @@ const Dashboard = () => {
 
   const createOrder = () => {
     // Make the API call using the updated state
-    API('POST', "api/orders/2", {
-      userId: 2,
+    API('POST', `api/orders/${userId}`, {
       date: "2019-12-10", // Fix: Use a string for the date
       products: Object.keys(selectedProducts).map((key) => ({
         productId: key,
@@ -93,7 +94,7 @@ const Dashboard = () => {
 
   const getOrder = () => {
     // Make the API call using the updated state
-    API('GET', "api/orders/2").then((res) => {
+    API('GET', `api/orders/${userId}`).then((res) => {
       handleSuccess(res)
       setOrders(res.data.data)
     }).catch(err => handleError(err))
@@ -117,12 +118,11 @@ const Dashboard = () => {
                   setSelectedProducts={setSelectedProducts}
                   updateCart={updateCart}
                 />
-
               );
             })}
         </div>}
         {activeTab === 1 && <div>
-          {orders.length &&
+          {!!orders.length &&
             orders.map((order, index) => {
               return <div key={index}>{order._id} - {order.price} </div>;
             })}
