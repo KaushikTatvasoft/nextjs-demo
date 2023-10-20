@@ -385,3 +385,7 @@ textarea {
 .submenu-margin-left {
     padding-left: 3.5rem !important;
 }
+
+.visually-hidden{
+    display: none;
+}

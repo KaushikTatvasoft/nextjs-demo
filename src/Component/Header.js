@@ -3,12 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { DropdownMenu, DropdownItem, UncontrolledDropdown, DropdownToggle, Navbar, Nav, Media } from "reactstrap";
 import { faImage, faKey, faAngleDown } from "@fortawesome/free-solid-svg-icons";
-import { getCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
 import { SidebarTabs } from "@/constants/general";
 import { usePathname, useRouter } from "next/navigation";
 
 const Header = (props) => {
-  const router = useRouter();
   const pathname = usePathname();
 
   return <>
@@ -56,9 +55,9 @@ const Header = (props) => {
                 </DropdownItem>
                 <DropdownItem divider />
                 <DropdownItem onClick={() => {
-                  router.push('/login')
                   deleteCookie('token')
                   deleteCookie('userData')
+                  window.location.href = '/login'
                 }}>
                   <i className="ni ni-button-power" />
                   <span>Logout</span>

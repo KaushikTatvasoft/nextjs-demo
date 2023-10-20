@@ -1,5 +1,4 @@
 "use client"; // This is a client component 👈🏽"
-import withAuth from "@/lib/withAuth";
 import React from "react";
 import { Col, Row } from "reactstrap";
 
@@ -20,4 +19,4 @@ const Footer = () => {
   </footer >
 };
 
-export default withAuth(Footer);
+export default Footer

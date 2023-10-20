@@ -99,12 +99,16 @@ export async function POST(req, params) {
       price: totalPrice,
     });
 
-    console.log(newOrder,"newOrder");
     await Carts.findOneAndUpdate({
       userId: params.params.userId,
-      completed: true,
-      orderId:newOrder._id
-    });
+      completed: false,
+    },
+      {
+        $set: {
+          completed: true,
+          orderId: newOrder._id,
+        },
+      });
 
     return NextResponse.json(
       { data: newOrder, message: "Order added successfully" },

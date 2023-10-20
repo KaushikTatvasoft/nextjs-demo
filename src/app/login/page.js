@@ -2,19 +2,18 @@
 import React, { useState } from "react";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-import API, { handleError, handleSuccess } from "../../lib/common";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import withAuth from "@/lib/withAuth";
-import { Button, Card, CardBody, Form, Input, FormGroup, Label } from "reactstrap";
+import { Button, Card, CardBody, Form } from "reactstrap";
 import InputField from "@/Component/InputField";
 import Link from "next/link";
-import Loader from "@/Component/Loader";
+import { Store } from "@/redux/configureStore";
+import { Actions } from "@/redux/actions";
+import API, { handleError, handleSuccess } from "../../lib/common";
 
 const Login = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -26,15 +25,15 @@ const Login = () => {
       password: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
-      setLoading(true)
+      Store.dispatch({ type: Actions.User.SetLoading, payload: true })
       await API('POST', "/api/login", values).then((res) => {
         setCookie("token", res.data.data.token);
         setCookie("userData", JSON.stringify(res.data.data.user));
         handleSuccess(res)
-        setLoading(false)
-        router.push("/dashboard");
+        Store.dispatch({ type: Actions.User.SetLoading, payload: false })
+        window.location.href = '/dashboard'
       }).catch(err => {
-        setLoading(false)
+        Store.dispatch({ type: Actions.User.SetLoading, payload: false })
         handleError(err)
       });
     },
@@ -53,7 +52,6 @@ const Login = () => {
           <span>Demo</span>
         </div>
         <Card className="shadow">
-          {loading && <Loader />}
           <CardBody>
             <div className="text-center mb-4">
               <h1>Log In</h1>
@@ -79,4 +77,4 @@ const Login = () => {
   );
 };
 
-export default withAuth(Login);
+export default Login

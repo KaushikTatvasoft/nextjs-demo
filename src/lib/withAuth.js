@@ -14,6 +14,8 @@ const withAuth = (WrappedComponent) => {
       if (!isAuthenticated) {
         // Redirect to the login page with the original requested route as a query parameter
         router.push('/login');
+      }else{
+        router.push('/dashboard');
       }
     }, [router]);
 

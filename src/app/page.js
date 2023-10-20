@@ -7,7 +7,6 @@ import { Button, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
-import withAuth from "@/lib/withAuth";
 
 const Login = () => {
   const router = useRouter();
@@ -84,4 +83,4 @@ const Login = () => {
   );
 };
 
-export default withAuth(Login);
+export default Login

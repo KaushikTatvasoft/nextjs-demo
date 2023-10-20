@@ -26,15 +26,16 @@ const Sidebar = (props) => {
   const createLinks = (routes) => {
     return !!routes?.length && routes.map((prop, key) => {
       return  <NavItem key={key}>
-      {/* <Link href={prop.path} key={key} > */}
-        <NavLink
-          onClick={() => router.push(prop.path )}
-          activeClassName="active"
-        >
+      <Link href={prop.path} key={key} className="nav-link">
+        {/* <NavLink
+         to={prop.path}
+          // onClick={() => router.push(prop.path )}
+          activeclassname="active"
+        > */}
           <i className={prop.icon} />
           <span className="menu-name">{prop.name}</span>
-        </NavLink>
-      {/* </Link> */}
+        {/* </NavLink> */}
+      </Link>
     </NavItem>
     });
   };

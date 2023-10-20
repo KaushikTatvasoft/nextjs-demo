@@ -1,20 +1,44 @@
 export default function user(
   initialState = {
-    activeTab: 0,
+    loading: false,
+    products: [],
+    selectedProducts: null,
+    orders: []
   },
   action
 ) {
   switch (action.type) {
-    case 'SET_USER_ACTIVE_TAB':
+    case 'SET_USER_LOADING':
       return {
         ...initialState,
-        activeTab: action.payload,
+        loading: action.payload,
+      };
+
+    case 'SET_USER_PRODUCTS':
+      return {
+        ...initialState,
+        products: action.payload,
+      };
+
+    case 'SET_USER_SELECTED_PRODUCT':
+      return {
+        ...initialState,
+        selectedProducts: action.payload,
+      };
+
+    case 'SET_USER_ORDERS':
+      return {
+        ...initialState,
+        orders: action.payload,
       };
 
     case 'USER_RESET':
       return {
         ...initialState,
-        activeTab: 0,
+        loading: false,
+        products: [],
+        selectedProducts: null,
+        orders: []
       };
 
     default:

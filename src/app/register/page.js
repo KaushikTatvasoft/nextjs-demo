@@ -3,24 +3,24 @@ import API, { handleError, handleSuccess } from "@/lib/common";
 import { useRouter } from "next/navigation";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import PageLoader from "next/dist/client/page-loader";
 import { useState } from "react";
 import { Button, Card, CardBody, Form, Col, Row, Label } from "reactstrap";
 import InputField from "@/Component/InputField";
 import { registrationInputFields } from "@/constants/general";
 import Link from "next/link";
+import { Store } from "@/redux/configureStore";
+import { Actions } from "@/redux/actions";
 
 const Register = () => {
   const router = useRouter();
-    // State
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
+  // State
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
       email: '',
-      phone:'',
+      phone: '',
       firstname: '',
       lastname: '',
       address: '',
@@ -31,7 +31,9 @@ const Register = () => {
       email: Yup.string().email('Invalid email address').required('Required'),
       firstname: Yup.string().required('Required'),
       lastname: Yup.string().required('Required'),
-      phone: Yup.string().required('Required'),
+      phone: Yup.string()
+        .matches(/^[0-9]{10}$/, 'Phone number must be exactly 10 digits')
+        .required('Required'),
       address: Yup.string(),
       password: Yup.string().required('Required'),
       confirmPassword: Yup.string()
@@ -39,10 +41,15 @@ const Register = () => {
         .required('Required'),
     }),
     onSubmit: async (values) => {
+      Store.dispatch({ type: Actions.User.SetLoading, payload: true })
       await API('POST', "/api/register", values).then(res => {
         handleSuccess(res)
+        Store.dispatch({ type: Actions.User.SetLoading, payload: false })
         router.push("/login");
-      }).catch(err => handleError(err));
+      }).catch(err => {
+        Store.dispatch({ type: Actions.User.SetLoading, payload: false })
+        handleError(err)
+      });
     },
   });
 
@@ -53,7 +60,6 @@ const Register = () => {
           <span>Demo</span>
         </div>
         <Card className="shadow">
-          {loading && <PageLoader />}
           <CardBody>
             <div className="text-center mb-4">
               <h1>Sign Up</h1>
