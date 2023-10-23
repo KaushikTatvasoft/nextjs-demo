@@ -45,3 +45,30 @@ export const SidebarTabs = [
     // component: <Products />,
   },
 ];
+
+export const ordersChartTooltips = {
+  callbacks: {
+    label: function (item, data) {
+      var label = data.datasets[item.datasetIndex].label || "";
+      var yLabel = item.yLabel;
+      var content = "";
+      if (data.datasets.length > 1) {
+        content += label;
+      }
+      content += yLabel;
+      return content;
+    }
+  }
+}
+
+export const ordersChartscales = {
+  yAxes: [
+    {
+      ticks: {
+        callback: function (value) {
+          return value;
+        }
+      }
+    }
+  ]
+}
