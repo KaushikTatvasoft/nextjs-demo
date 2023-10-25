@@ -1,4 +1,4 @@
-// reactstrap components
+"use client"; // This is a client component 👈🏽"
 import { Card, CardBody, CardTitle, Row, Col } from "reactstrap";
 import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -1,11 +1,12 @@
-/* eslint-disable react/display-name */
+"use client"; // This is a client component 👈🏽"
 import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 const withAuth = (WrappedComponent) => {
   return (props) => {
     const router = useRouter();
+    const pathName = usePathname();
 
     useEffect(() => {
       // Check if the user is authenticated (you need to implement this logic)
@@ -15,7 +16,7 @@ const withAuth = (WrappedComponent) => {
         // Redirect to the login page with the original requested route as a query parameter
         router.push('/login');
       }else{
-        router.push('/dashboard');
+        router.push(pathName);
       }
     }, [router]);
 

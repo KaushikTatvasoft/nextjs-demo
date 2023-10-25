@@ -11,6 +11,7 @@ module.exports =
         image: { type: String },
         price: { type: Number },
         salePrice: { type: Number },
+        categoryId: { type: String },
         title: { type: String },
       },
       { versionKey: false }

@@ -2,6 +2,7 @@ export default function user(
   initialState = {
     loading: false,
     products: [],
+    categories: [],
     selectedProducts: null,
     orders: []
   },
@@ -20,6 +21,12 @@ export default function user(
         products: action.payload,
       };
 
+      case 'SET_USER_CATEGORIES':
+        return {
+          ...initialState,
+          categories: action.payload,
+        };
+
     case 'SET_USER_SELECTED_PRODUCT':
       return {
         ...initialState,
@@ -37,6 +44,7 @@ export default function user(
         ...initialState,
         loading: false,
         products: [],
+        categories: [],
         selectedProducts: null,
         orders: []
       };
