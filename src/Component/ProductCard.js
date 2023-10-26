@@ -28,7 +28,7 @@ export default function ProductCard({
             </div>
             <Col className="h2 col-auto m-0">
               <div className="price">
-                ₹{product.price}
+                ₹{product.salePrice}
               </div>
             </Col>
           </Row>
