@@ -1,3 +1,4 @@
+"use client"; // This is a client component 👈🏽"
 import React from 'react'
 import { FormFeedback, Input, InputGroup, InputGroupText, Label } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

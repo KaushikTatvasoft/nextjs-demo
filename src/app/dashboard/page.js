@@ -9,7 +9,7 @@ import { ordersChartTooltips, ordersChartscales } from "@/constants/general";
 import { chartOptions, parseOptions } from "@/lib/charts";
 
 const Dashboard = () => {
-  if (window.Chart) {
+  if (typeof window !== 'undefined' && window.Chart) {
     parseOptions(Chart, chartOptions());
   }
 

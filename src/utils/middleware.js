@@ -95,3 +95,18 @@ export const getOrder = () => {
     handleError(err)
   })
 };
+
+export const getCategories = () => {
+  Store.dispatch({ type: Actions.User.SetLoading, payload: true })
+  API('GET', "/api/categories")
+    .then((res) => {
+      handleSuccess(res)
+      Store.dispatch({ type: Actions.User.SetLoading, payload: false })
+      if (res?.data?.data?.length) {
+        Store.dispatch({ type: Actions.User.SetCategories, payload: res.data.data || [] })
+      }
+    }).catch(err => {
+      Store.dispatch({ type: Actions.User.SetLoading, payload: false })
+      handleError(err)
+    })
+}

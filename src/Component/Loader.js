@@ -1,4 +1,4 @@
-"use client"
+"use client"; // This is a client component 👈🏽"
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Spinner } from 'reactstrap'

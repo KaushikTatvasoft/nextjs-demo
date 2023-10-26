@@ -24,8 +24,8 @@ const Header = (props) => {
               <DropdownToggle className="pr-0" nav >
                 <Media className="align-items-center">
                   <span className="avatar avatar-sm rounded-circle">
-                    {/* {restaurant?.logo ? <img alt="Logo" src={restaurant?.logo} className="full-height" /> :
-                      <FontAwesomeIcon icon={faImage} />} */}
+                    {/* {restaurant?.logo ? <img alt="Logo" src={restaurant?.logo} className="full-height" /> :*/}
+                      <FontAwesomeIcon icon={faImage} />
                   </span>
                   <Media className="ml-2 d-none d-lg-inline-flex align-items-center">
                     <span className="text-sm profile-name">
