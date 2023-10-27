@@ -5,6 +5,7 @@ import Carts from '../../../../Models/carts';
 import Products from '../../../../Models/products';
 import { NextResponse } from "next/server";
 import authenticate from "@/lib/authMiddleware";
+import { pageSize } from "@/constants/general";
 
 export async function GET(req, params) {
   try {
@@ -23,11 +24,22 @@ export async function GET(req, params) {
       );
     }
 
+    // Pagination parameters
+    const page = req?.nextUrl?.searchParams.get("page")
+    const skip = (page - 1) * pageSize;
+
+    // Sorting parameters
+    const activeSort = req?.nextUrl?.searchParams.get("activeSort");
+    const sortOrder = req?.nextUrl?.searchParams.get("sortOrder");
+
     // Use bcrypt or another secure password hashing library for real-world applications
-    const orders = await Orders.find(params.params).populate("userId", { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 });
+    const orders = await Orders.find(params.params).populate("userId", { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 }).sort({ [activeSort]: sortOrder === "ASC" ? 1 : -1 }).skip(skip)
+      .limit(pageSize);
+
+    const allData = await Orders.find(params.params)
 
     return NextResponse.json(
-      { data: orders, message: "Order fetch Successfully" },
+      { data: orders, count: allData.length, message: "Order fetch Successfully" },
       { status: 200 }
     );
 

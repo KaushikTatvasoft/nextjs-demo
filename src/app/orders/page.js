@@ -1,22 +1,28 @@
 "use client"; // This is a client component 👈🏽"
-import { getOrder, getProducts } from "@/utils/middleware";
+import { getOrder, getProducts, handleSortColumn, sortIcon } from "@/utils/middleware";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Card, CardHeader, Table, Row, Button, Collapse, CardBody, UncontrolledTooltip, Badge, } from "reactstrap";
 import { faChevronDown, faChevronRight, faLink, faListCheck, faPen, faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "@/Component/Pagination";
+import { Store } from "@/redux/configureStore";
+import { Actions } from "@/redux/actions";
 
 const Orders = () => {
-  const { products, orders } = useSelector(state => state.user)
+  const { products } = useSelector(state => state.user)
+  const { orders, totalPage, activeSort, sortOrder, page } = useSelector(state => state.orders)
   const [openOrder, setOpenOrder] = useState();
   const [selectedProduct, setSelectedProduct] = useState([]);
 
   useEffect(() => {
-    getOrder()
+    getOrder(page, activeSort, sortOrder)
     if (!products?.length) {
-      getProducts()
+      getProducts()  
     }
-  }, [])
+  }, [page, activeSort, sortOrder])
+
+  useEffect(() => () => Store.dispatch({ type: Actions.Orders.OrderReset }), [])
 
   return <div>
     <Row>
@@ -28,11 +34,11 @@ const Orders = () => {
           {orders?.length !== 0 ? <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">
               <tr>
-                <th scope='col' >No.</th>
-                <th scope='col' >Order ID </th>
+                <th scope='col' className='serial-number cursor-pointer' onClick={() => handleSortColumn('', '', '', 'Orders')}>No.</th>
+                <th scope='col' onClick={() => handleSortColumn('_id', activeSort, sortOrder, 'Orders')}>Order ID <FontAwesomeIcon icon={sortIcon(activeSort, '_id', sortOrder)} /></th>
                 <th scope='col'>Items </th>
-                <th scope='col'>Customers</th>
-                <th scope='col' >Total </th>
+                <th scope='col'>Customers </th>
+                <th scope='col' onClick={() => handleSortColumn('price', activeSort, sortOrder, 'Orders')}>Total <FontAwesomeIcon icon={sortIcon(activeSort, 'price', sortOrder)} /></th>
                 <th scope='col' />
               </tr>
             </thead>
@@ -104,6 +110,7 @@ const Orders = () => {
               })}
             </tbody>
           </Table> : null}
+          <Pagination page={page} totalPage={totalPage} handlePageClick={({ selected }) => Store.dispatch({ type: Actions.Orders.SetPage, payload: selected + 1 })} />
         </Card>
       </div>
     </Row>

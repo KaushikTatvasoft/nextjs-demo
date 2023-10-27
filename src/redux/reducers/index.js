@@ -3,9 +3,7 @@ export default function user(
     loading: false,
     products: [],
     categories: [],
-    carts: [],
     selectedProducts: null,
-    orders: []
   },
   action
 ) {
@@ -28,22 +26,10 @@ export default function user(
         categories: action.payload,
       };
 
-    case 'SET_USER_CARTS':
-      return {
-        ...initialState,
-        carts: action.payload,
-      };
-
     case 'SET_USER_SELECTED_PRODUCT':
       return {
         ...initialState,
         selectedProducts: action.payload,
-      };
-
-    case 'SET_USER_ORDERS':
-      return {
-        ...initialState,
-        orders: action.payload,
       };
 
     case 'USER_RESET':
@@ -52,9 +38,7 @@ export default function user(
         loading: false,
         products: [],
         categories: [],
-        carts: [],
         selectedProducts: null,
-        orders: []
       };
 
     default:

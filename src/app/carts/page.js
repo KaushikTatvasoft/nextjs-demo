@@ -1,27 +1,32 @@
 "use client"; // This is a client component 👈🏽"
-import ProductCardForCart from "@/Component/ProductCardForCart";
-import { createOrder, getCart, getProducts } from "@/utils/middleware";
+import { createOrder, getCart, getProducts, handleSortColumn, sortIcon } from "@/utils/middleware";
 import { Card, CardHeader, Table, Row, Button, Collapse, CardBody, UncontrolledTooltip, Badge, } from "reactstrap";
 import { faChevronDown, faChevronRight, faLink, faListCheck, faPen, faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Pagination from "@/Component/Pagination";
+import { Actions } from "@/redux/actions";
+import { Store } from "@/redux/configureStore";
 
 const Cart = () => {
-  const { products, selectedProducts, orders, carts } = useSelector(state => state.user)
+  const { products, selectedProducts } = useSelector(state => state.user)
+  const { page, totalPage, activeSort, sortOrder, carts } = useSelector(state => state.carts)
   const [openOrder, setOpenOrder] = useState();
 
   useEffect(() => {
-    getCart()
+    getCart(page,activeSort,sortOrder)
     if (!products?.length) {
       getProducts()
     }
-  }, [])
+  }, [page,activeSort,sortOrder])
 
   const getProduct = (id) => {
     const matchingProducts = products.filter((product) => product._id === id);
     return matchingProducts.length > 0 ? matchingProducts[0] : null;
   };
+
+  useEffect(() => () => Store.dispatch({ type: Actions.Carts.CartReset }), [])
 
   return (
     <Row>
@@ -33,12 +38,12 @@ const Cart = () => {
           {carts?.length !== 0 ? <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">
               <tr>
-                <th scope='col' >No.</th>
-                <th scope='col' >Order ID </th>
+                <th scope='col' className='serial-number cursor-pointer' onClick={() => handleSortColumn('', '', '', 'Carts')}>No.</th>
+                <th scope='col' onClick={() => handleSortColumn('_id', activeSort, sortOrder, 'Carts')} >Order ID <FontAwesomeIcon icon={sortIcon(activeSort, '_id', sortOrder)} /></th>
                 <th scope='col'>Items </th>
-                <th scope='col'>Customers</th>
-                <th scope='col'>Status</th>
-                <th scope='col' >Total </th>
+                <th scope='col'>Customers </th>
+                <th scope='col'>Status </th>
+                <th scope='col' onClick={() => handleSortColumn('price', activeSort, sortOrder, 'Carts')} >Total <FontAwesomeIcon icon={sortIcon(activeSort, 'price', sortOrder)} /></th>
                 <th scope='col' />
               </tr>
             </thead>
@@ -111,7 +116,7 @@ const Cart = () => {
                                   <div className="flex justify-end mt-2">
                                     <Button onClick={() => {
                                       setOpenOrder('')
-                                      createOrder(selectedProducts)
+                                      createOrder(selectedProducts, page)
                                     }}>Order Now</Button>
                                   </div>
                                 </div>
@@ -126,6 +131,7 @@ const Cart = () => {
               })}
             </tbody>
           </Table> : null}
+          <Pagination page={page} totalPage={totalPage} handlePageClick={({ selected }) => Store.dispatch({ type: Actions.Carts.SetPage, payload: selected + 1 })} />
         </Card>
       </div>
     </Row>

@@ -1,5 +1,8 @@
 // Reducers
 import user from './reducers/index';
+import carts from './reducers/carts';
+import orders from './reducers/orders';
+import categories from './reducers/categories';
 
 // Utility Packages
 import { combineReducers } from 'redux';
@@ -9,5 +12,8 @@ import { combineReducers } from 'redux';
 /* *********************** */
 
 export default combineReducers({
-  user
+  user,
+  carts,
+  orders,
+  categories
 });
