@@ -24,7 +24,7 @@ export async function GET(req, params) {
     }
 
     // Use bcrypt or another secure password hashing library for real-world applications
-    const orders = await Orders.find(params.params);
+    const orders = await Orders.find(params.params).populate("userId", { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 });
 
     return NextResponse.json(
       { data: orders, message: "Order fetch Successfully" },
@@ -89,8 +89,8 @@ export async function POST(req, params) {
     // Calculate the total price based on the products array
     const totalPrice = await Promise.all(reqData.products.map(async product => {
       const productDetails = await Products.findOne({ _id: product.productId });
-      return productDetails ? productDetails.price * product.quantity : 0;
-    })).then(prices => prices.reduce((total, price) => total + price, 0));
+      return productDetails ? productDetails.salePrice * product.quantity : 0;
+    })).then(prices => prices.reduce((total, salePrice) => total + salePrice, 0));
 
     // Add data to the Orders table
     const newOrder = await Orders.create({

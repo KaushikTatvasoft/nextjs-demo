@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 module.exports =
   mongoose.models.carts ||
@@ -6,11 +6,15 @@ module.exports =
     "carts",
     new mongoose.Schema(
       {
-        userId: { type: String },
+        userId: {
+          type: Schema.Types.ObjectId,
+          ref: "users",
+          required: true,
+        },
         products: { type: Array },
         completed: { type: Boolean },
         orderId: { type: String },
-      },
-      { versionKey: false }
+        price: { type: Number },
+      }
     )
   );

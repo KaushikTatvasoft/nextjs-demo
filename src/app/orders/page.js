@@ -52,7 +52,7 @@ const Orders = () => {
                       <td className='serial-number'>{index + 1}</td>
                       <td>{order?._id}</td>
                       <td>{order?.products?.length}</td>
-                      <td>{order.userId}</td>
+                      <td>{(order.userId?.firstname || '') + " " + (order.userId?.lastname || '')}</td>
                       <td>{order.price && `₹${order.price}`}</td>
                       <td className="text-right">
                         <Button className="action-icon-btn">
@@ -83,8 +83,8 @@ const Orders = () => {
                                           <tr key={i}>
                                             <td>{item.title}</td>
                                             <td>{item.quantity}</td>
-                                            <td>₹{item.price}</td>
-                                            <td>₹{item.price * item.quantity}</td>
+                                            <td>₹{item.salePrice}</td>
+                                            <td>₹{item.salePrice * item.quantity}</td>
                                           </tr>
                                         ))}
                                       </tbody>

@@ -27,12 +27,17 @@ export const getCart = () => {
     .then((res) => {
       handleSuccess(res)
       Store.dispatch({ type: Actions.User.SetLoading, payload: false })
+      Store.dispatch({ type: Actions.User.SetCarts, payload: res.data.data || [] })
       let products = []
-      if (res.data.data) {
-        products = res.data.data?.products.reduce((result, item) => {
-          result[item.productId] = item.quantity;
-          return result;
-        }, {});
+      if (res.data.data?.length) {
+        res.data.data.forEach(cart => {
+          if(!cart.completed){
+            products = cart?.products.reduce((result, item) => {
+              result[item.productId] = item.quantity;
+              return result;
+            }, {});
+          }
+        })
       }
       Store.dispatch({ type: Actions.User.SetSelectedProducts, payload: products })
     }).catch(err => {
@@ -75,7 +80,7 @@ export const createOrder = (products) => {
       quantity: products[key],
     })),
   })
-    .then(() => getOrder()).catch(err => {
+    .then(() => getCart()).catch(err => {
       Store.dispatch({ type: Actions.User.SetLoading, payload: false })
       handleError(err)
     })

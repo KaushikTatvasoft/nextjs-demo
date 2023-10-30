@@ -1,6 +1,7 @@
 // pages/api/login.js
 import dbConnect from "@/lib/dbConnect";
-import Carts from '../../../../Models/carts'
+import Carts from '../../../../Models/carts';
+import Products from '../../../../Models/products';
 import { NextResponse } from "next/server";
 import authenticate from "@/lib/authMiddleware";
 
@@ -22,14 +23,10 @@ export async function GET(req, params) {
     }
 
     // Use bcrypt or another secure password hashing library for real-world applications
-    const carts = await Carts.findOne({
-      $and: [
-        { userId: params.params.userId },
-        { completed: false }
-      ]
-    });
+    const carts = await Carts.find(params.params).populate("userId", { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 });
+
     return NextResponse.json(
-      { data: carts, message: "Cart fetch Successfully" },
+      { data: carts || [], message: "Cart fetch Successfully" },
       { status: 200 }
     );
 
@@ -88,10 +85,16 @@ export async function PUT(req, params) {
       );
     }
 
+    // Calculate the total price based on the products array
+    const totalPrice = await Promise.all(reqData.products.map(async product => {
+      const productDetails = await Products.findOne({ _id: product.productId });
+      return productDetails ? productDetails.salePrice * product.quantity : 0;
+    })).then(prices => prices.reduce((total, salePrice) => total + salePrice, 0));
+
     // Update data in the Carts table based on userId
     const updatedCart = await Carts.findOneAndUpdate(
       { userId: params.params.userId, completed: false },
-      { products: reqData.products },
+      { products: reqData.products, price: totalPrice },
       { new: true, upsert: true }
     );
 
