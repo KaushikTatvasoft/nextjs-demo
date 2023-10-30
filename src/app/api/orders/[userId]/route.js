@@ -5,6 +5,8 @@ import Carts from '../../../../Models/carts';
 import Products from '../../../../Models/products';
 import { NextResponse } from "next/server";
 import authenticate from "@/lib/authMiddleware";
+import { pageSize } from "@/constants/general";
+import { Types } from "mongoose";
 
 export async function GET(req, params) {
   try {
@@ -23,11 +25,67 @@ export async function GET(req, params) {
       );
     }
 
-    // Use bcrypt or another secure password hashing library for real-world applications
-    const orders = await Orders.find(params.params).populate("userId", { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 });
+    // Pagination parameters
+    const page = req?.nextUrl?.searchParams.get("page")
+
+    // Sorting parameters
+    const activeSort = req?.nextUrl?.searchParams.get("activeSort");
+    const sortOrder = req?.nextUrl?.searchParams.get("sortOrder");
+    // Search query parameter
+    const searchQuery = req?.nextUrl?.searchParams.get("search");
+
+    // Using Populate
+    // const orders = await Orders.find({
+    //   ...(searchQuery && {
+    //     $or: [
+    //       { 'user.firstname': { $regex: searchQuery } },
+    //       // { 'price': +searchQuery },
+    //     ],
+    //   }),
+    // }).populate('userId', { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 }).sort({ [activeSort]: sortOrder === "ASC" ? 1 : -1 }).skip((page - 1) * pageSize).limit(pageSize);
+
+    const userId = new Types.ObjectId(params.params.userId)
+    const orders = await Orders.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+      {
+        $match: {
+          'user._id': userId,
+          ...(searchQuery && {
+            $or: [
+              { 'user.firstname': { $regex: searchQuery } },
+              { 'user.lastname': { $regex: searchQuery } },
+              { 'price': +searchQuery },
+            ],
+          }),
+        },
+      },
+      {
+        $sort: { [activeSort]: sortOrder === 'ASC' ? 1 : -1 },
+      },
+      {
+        $skip: (page - 1) * pageSize,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
+    
+
+
+    const allData = await Orders.find(params.params)
 
     return NextResponse.json(
-      { data: orders, message: "Order fetch Successfully" },
+      { data: orders, count: allData.length, message: "Order fetch Successfully" },
       { status: 200 }
     );
 

@@ -11,7 +11,9 @@ export const StatusCode = {
 export const registrationInputFields = [
   { placeholderLeft: "Email", requiredLeft: true, fieldNameLeft: "email", placeholderRight: "Phone", requiredRight: true, inputTypeRight: 'number', fieldNameRight: "phone" },
   { placeholderLeft: "Password", requiredLeft: true, fieldNameLeft: "password", inputTypeLeft: "password", passwordIconLeft: true, requiredRight: true, placeholderRight: "Confirm password", fieldNameRight: "confirmPassword", inputTypeRight: "password", passwordIconRight: true },
-  ]
+]
+
+export const pageSize = 2
 
 export const SidebarTabs = [
   {
