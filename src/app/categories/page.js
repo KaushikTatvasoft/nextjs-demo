@@ -7,13 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Actions } from "@/redux/actions";
 import Pagination from "@/Component/Pagination";
 import { Store } from "@/redux/configureStore";
+import SearchInput from "@/Component/SearchInput";
 
 const Categories = () => {
-  const { page, totalPage, activeSort, sortOrder, categories } = useSelector(state => state.categories)
-  
+  const { page, totalPage, activeSort, sortOrder, search, categories } = useSelector(state => state.categories)
+
   useEffect(() => {
-    getCategories(page,activeSort,sortOrder)
-  }, [page,activeSort,sortOrder])
+    getCategories(page, activeSort, sortOrder, search)
+  }, [page, activeSort, sortOrder, search])
 
   return (
     <div className="custom-container">
@@ -22,6 +23,9 @@ const Categories = () => {
           <Card className="shadow">
             <CardHeader className="border-0 space-between-div table-header-div">
               <h3 className="mb-0">Categories List</h3>
+              <div className="right-div-wrap">
+                <SearchInput action="Categories" />
+              </div>
             </CardHeader>
             {categories.length !== 0 ? <Table className="align-items-center table-flush" responsive>
               <thead className="thead-light">

@@ -20,14 +20,15 @@ export const getProducts = () => {
     })
 }
 
-export const getCart = (page, activeSort, sortOrder) => {
+export const getCart = (page, activeSort, sortOrder, search) => {
   const userId = getCookie('userData') ? JSON.parse(getCookie('userData'))?.userId : null;
 
   Store.dispatch({ type: Actions.User.SetLoading, payload: true })
   const params = {
-    ...(!!page ? { page, 'pageSize': pageSize } : {}),
+    ...(!!search ? { search } : {}),
     ...(!!activeSort ? { activeSort } : {}),
     ...(!!sortOrder ? { sortOrder } : {}),
+    ...(!!page ? { page, 'pageSize': pageSize } : {}),
   }
   API('GET', `api/carts/${userId}`, { params })
     .then((res) => {
@@ -93,15 +94,16 @@ export const createOrder = (products, page) => {
     })
 };
 
-export const getOrder = (page, activeSort, sortOrder) => {
+export const getOrder = (page, activeSort, sortOrder, search) => {
   const userId = getCookie('userData') ? JSON.parse(getCookie('userData'))?.userId : null;
 
   // Make the API call using the updated state
   Store.dispatch({ type: Actions.User.SetLoading, payload: true })
   const params = {
-    ...(!!page ? { page, 'pageSize': pageSize } : {}),
+    ...(!!search ? { search } : {}),
     ...(!!activeSort ? { activeSort } : {}),
     ...(!!sortOrder ? { sortOrder } : {}),
+    ...(!!page ? { page, 'pageSize': pageSize } : {}),
   }
   API('GET', `api/orders/${userId}`, { params }).then((res) => {
     handleSuccess(res)
@@ -114,12 +116,13 @@ export const getOrder = (page, activeSort, sortOrder) => {
   })
 };
 
-export const getCategories = (page, activeSort, sortOrder) => {
+export const getCategories = (page, activeSort, sortOrder, search) => {
   Store.dispatch({ type: Actions.User.SetLoading, payload: true })
   const params = {
-    ...(!!page ? { page, 'pageSize': pageSize } : {}),
+    ...(!!search ? { search } : {}),
     ...(!!activeSort ? { activeSort } : {}),
     ...(!!sortOrder ? { sortOrder } : {}),
+    ...(!!page ? { page, 'pageSize': pageSize } : {}),
   }
   API('GET', "/api/categories", { params })
     .then((res) => {

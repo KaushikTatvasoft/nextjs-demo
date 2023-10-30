@@ -16,14 +16,42 @@ export async function GET(req, res) {
 
     // Pagination parameters
     const page = req?.nextUrl?.searchParams.get("page")
-    const skip = (page - 1) * pageSize;
 
     // Sorting parameters
     const activeSort = req?.nextUrl?.searchParams.get("activeSort");
     const sortOrder = req?.nextUrl?.searchParams.get("sortOrder");
+    // Search query parameter
+    const searchQuery = req?.nextUrl?.searchParams.get("search");
 
-    const categories = await Categories.find().sort({ [activeSort]: sortOrder === "ASC" ? 1 : -1 }).skip(skip)
-      .limit(pageSize);
+    // const categories = await Categories.find({
+    //   ...(searchQuery && {
+    //     $or: [
+    //       { 'name': { $regex: searchQuery } }
+    //     ],
+    //   }),
+    // }).sort({ [activeSort]: sortOrder === "ASC" ? 1 : -1 }).skip((page - 1) * pageSize).limit(pageSize);
+
+    const categories = await Categories.aggregate([
+      {
+        $match: {
+          ...(searchQuery && {
+            $or: [
+              { 'name': { $regex: searchQuery } }
+            ],
+          }),
+        },
+      },
+      {
+        $sort: { [activeSort]: sortOrder === 'ASC' ? 1 : -1 },
+      },
+      {
+        $skip: (page - 1) * pageSize,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
+    
 
     const allData = await Categories.find()
     return NextResponse.json(

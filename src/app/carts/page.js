@@ -8,18 +8,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Pagination from "@/Component/Pagination";
 import { Actions } from "@/redux/actions";
 import { Store } from "@/redux/configureStore";
+import SearchInput from "@/Component/SearchInput";
 
 const Cart = () => {
   const { products, selectedProducts } = useSelector(state => state.user)
-  const { page, totalPage, activeSort, sortOrder, carts } = useSelector(state => state.carts)
+  const { page, totalPage, activeSort, sortOrder, search, carts } = useSelector(state => state.carts)
   const [openOrder, setOpenOrder] = useState();
 
   useEffect(() => {
-    getCart(page,activeSort,sortOrder)
+    getCart(page, activeSort, sortOrder, search)
     if (!products?.length) {
       getProducts()
     }
-  }, [page,activeSort,sortOrder])
+  }, [page, activeSort, sortOrder, search])
 
   const getProduct = (id) => {
     const matchingProducts = products.filter((product) => product._id === id);
@@ -34,6 +35,9 @@ const Cart = () => {
         <Card className="shadow">
           <CardHeader className="border-0 space-between-div table-header-div">
             <h3 className="mb-0">Cart List</h3>
+            <div className="right-div-wrap">
+              <SearchInput action="Carts" />
+            </div>
           </CardHeader>
           {carts?.length !== 0 ? <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">
@@ -62,7 +66,7 @@ const Cart = () => {
                       <td className='serial-number'>{index + 1}</td>
                       <td>{order?._id}</td>
                       <td>{order?.products?.length}</td>
-                      <td>{(order.userId?.firstname || '') + " " + (order.userId?.lastname || '')}</td>
+                      <td>{(order.user?.firstname || '') + " " + (order.user?.lastname || '')}</td>
                       <td>
                         <Badge className={order.completed ? 'badge-success' : "badge-warning"} style={{ fontSize: 12 }}>
                           {order.completed ? 'Completed' : 'Not Completed'}

@@ -8,19 +8,20 @@ import { faChevronDown, faChevronRight, faLink, faListCheck, faPen, faStar as so
 import Pagination from "@/Component/Pagination";
 import { Store } from "@/redux/configureStore";
 import { Actions } from "@/redux/actions";
+import SearchInput from "@/Component/SearchInput";
 
 const Orders = () => {
   const { products } = useSelector(state => state.user)
-  const { orders, totalPage, activeSort, sortOrder, page } = useSelector(state => state.orders)
+  const { orders, totalPage, search, activeSort, sortOrder, page } = useSelector(state => state.orders)
   const [openOrder, setOpenOrder] = useState();
   const [selectedProduct, setSelectedProduct] = useState([]);
 
   useEffect(() => {
-    getOrder(page, activeSort, sortOrder)
+    getOrder(page, activeSort, sortOrder, search)
     if (!products?.length) {
-      getProducts()  
+      getProducts()
     }
-  }, [page, activeSort, sortOrder])
+  }, [page, activeSort, sortOrder, search])
 
   useEffect(() => () => Store.dispatch({ type: Actions.Orders.OrderReset }), [])
 
@@ -30,6 +31,9 @@ const Orders = () => {
         <Card className="shadow">
           <CardHeader className="border-0 space-between-div table-header-div">
             <h3 className="mb-0">Orders List</h3>
+            <div className="right-div-wrap">
+              <SearchInput action="Orders" />
+            </div>
           </CardHeader>
           {orders?.length !== 0 ? <Table className="align-items-center table-flush" responsive>
             <thead className="thead-light">
@@ -58,7 +62,7 @@ const Orders = () => {
                       <td className='serial-number'>{index + 1}</td>
                       <td>{order?._id}</td>
                       <td>{order?.products?.length}</td>
-                      <td>{(order.userId?.firstname || '') + " " + (order.userId?.lastname || '')}</td>
+                      <td>{(order.user?.firstname || '') + " " + (order.user?.lastname || '')}</td>
                       <td>{order.price && `₹${order.price}`}</td>
                       <td className="text-right">
                         <Button className="action-icon-btn">

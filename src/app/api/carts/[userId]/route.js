@@ -5,6 +5,7 @@ import Products from '../../../../Models/products';
 import { NextResponse } from "next/server";
 import authenticate from "@/lib/authMiddleware";
 import { pageSize } from "@/constants/general";
+import { Types } from "mongoose";
 
 export async function GET(req, params) {
   try {
@@ -25,17 +26,61 @@ export async function GET(req, params) {
 
     // Pagination parameters
     const page = req?.nextUrl?.searchParams.get("page")
-    const skip = (page - 1) * pageSize;
 
     // Sorting parameters
     const activeSort = req?.nextUrl?.searchParams.get("activeSort");
     const sortOrder = req?.nextUrl?.searchParams.get("sortOrder");
-
+    // Search query parameter
+    const searchQuery = req?.nextUrl?.searchParams.get("search");
+    
     let carts = []
+    const userId = new Types.ObjectId(params.params.userId)
     if (page) {
-      // Use bcrypt or another secure password hashing library for real-world applications
-      carts = await Carts.find(params.params).populate("userId", { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 }).sort({ [activeSort]: sortOrder === "ASC" ? 1 : -1 }).skip(skip)
-        .limit(pageSize);
+      // Using Populate
+      // carts = await Carts.find({
+      //   ...params.params,
+      //   ...(searchQuery && {
+      //     $or: [
+      //       { 'user.firstname': { $regex: searchQuery } },
+      //       { 'price': +searchQuery },
+      //     ],
+      //   }),
+      // }).populate("userId", { email: 1, firstname: 1, lastname: 1, address: 1, _id: 1 }).sort({ [activeSort]: sortOrder === "ASC" ? 1 : -1 }).skip((page - 1) * pageSize).limit(pageSize);
+
+      carts = await Carts.aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'user',
+          },
+        },
+        {
+          $unwind: '$user',
+        },
+        {
+          $match: {
+            'user._id': userId,
+            ...(searchQuery && {
+              $or: [
+                { 'user.firstname': { $regex: searchQuery } },
+                { 'user.lastname': { $regex: searchQuery } },
+                { 'price': +searchQuery },
+              ],
+            }),
+          },
+        },
+        {
+          $sort: { [activeSort]: sortOrder === 'ASC' ? 1 : -1 },
+        },
+        {
+          $skip: (page - 1) * pageSize,
+        },
+        {
+          $limit: pageSize,
+        },
+      ]);
     }
 
     const allData = await Carts.find(params.params)
