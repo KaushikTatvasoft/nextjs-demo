@@ -4,7 +4,6 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
 import { getCookie } from "cookies-next";
-import withAuth from "@/lib/withAuth";
 
 const Main = ({ children }) => {
   const isAuthenticated = !!getCookie('token');
@@ -31,4 +30,4 @@ const Main = ({ children }) => {
   );
 };
 
-export default withAuth(Main)
+export default Main

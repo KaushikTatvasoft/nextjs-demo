@@ -15,6 +15,8 @@ export const registrationInputFields = [
 
 export const pageSize = 2
 
+export const PUBLIC_ROUTES = ['/register', '/login']
+
 export const SidebarTabs = [
   {
     path: "/dashboard",
